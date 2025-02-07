@@ -1,0 +1,361 @@
+<!--public/index.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px cyan;
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 30px;
+            color: orangered;
+            text-shadow: 3px 3px 6px cyan;
+            
+        }
+        .form-group {
+            margin-bottom: 8px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .form-group input {
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            color: #000;
+            border-radius: 4px;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        .btn {
+            width: 100%;
+            padding: 10px;
+            background: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn:hover {
+            background: #0056b3;
+        }
+        .link {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        .link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="login-container">
+        <h2>🌏 Login 🗾</h2>
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="loginType">Login as:</label>
+                <select id="loginType" required>
+                    <option value="Player">Player</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <input type="password" id="password" placeholder="Enter your password" required>
+            </div>
+            <button type="button" class="btn" onclick="handleLogin()">Login</button>
+        </form>
+        <a href="#" class="link" onclick="showRegisterForm()">Create Account</a>
+        <a href="#" class="link" onclick="showResetPasswordForm()">Forgot Password?</a>
+    </div>
+
+    <div class="login-container" id="registerForm" style="display: none;">
+        <h2>🪪 Register 🌐</h2>
+        <form>
+            <div class="form-group">
+                <label for="registerType">Register as:</label>
+                <select id="registerType" required>
+                    <option value="Player">Player</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="registerUsername">Username:</label>
+                <input type="text" id="registerUsername" placeholder="Enter your username" required>
+            </div>
+            <!-- เพิ่มฟิลด์ Gmail ในฟอร์มสมัครสมาชิก -->
+            <div class="form-group">
+                <label for="registerEmail">Email (Gmail):</label>
+                <input type="email" id="registerEmail" placeholder="Enter your Gmail" required>
+            </div>
+
+            <div class="form-group">
+                <label for="registerPassword">Password:</label>
+                <input type="password" id="registerPassword" placeholder="Enter your password" required>
+            </div>
+            <button type="button" class="btn" onclick="handleRegister()">Register</button>
+        </form>
+        <a href="#" class="link" onclick="showLoginForm()">Back to Login</a>
+    </div>
+
+    <div class="login-container" id="resetPasswordForm" style="display: none;">
+        <h2>🤨 Forgot Password 🤔</h2>
+        <form>
+            <div class="form-group">
+                <label for="resetType">Reset as:</label>
+                <select id="resetType" required>
+                    <option value="Player">Player</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="resetUsername">Username:</label>
+                <input type="text" id="resetUsername" placeholder="Enter your username" required>
+            </div>
+            <div class="form-group">
+                <label for="resetEmail">Email:</label>  
+                <input type="email" id="resetEmail" placeholder="Enter your email" required>
+            </div>            
+          <p><button type="button" class="btn" onclick="sendOTP()">Send OTP</button></p>            
+            
+          <div class="form-group" id="resetPasswordBtn" style="display: none;">
+                <label for="otpCode">OTP:</label>
+                <input type="text" id="otpCode" placeholder="Enter OTP sent to your Gmail" required>
+            </div>  
+            <div class="form-group" id="newPasswordGroup" style="display: none;">
+                <label for="newPassword">New Password:</label>
+                <input type="password" id="newPassword" placeholder="Enter new password" required>
+            </div>
+                <button type="button" class="btn" onclick="handlePasswordReset()">Reset Password</button>
+
+        <a href="#" class="link" onclick="showLoginForm()">Back to Login</a>
+    </div>
+    
+    <script>
+    const API_BASE_URL = "http://localhost:3000";
+
+    
+    async function handleLogin() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const loginType = document.getElementById('loginType').value;  // ดึงค่า loginType
+        // ตั้งค่า loginType ใน localStorage
+        localStorage.setItem("loginType", loginType.toLowerCase()); 
+
+    if (!username || !password) {
+        alert('Please fill in all fields.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/login`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password, type: loginType })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            // เก็บชื่อผู้ใช้ใน sessionStorage
+            sessionStorage.setItem('username', username);
+            alert(`${data.type} login successful!`);
+            
+            // ตรวจสอบ loginType และไปยังหน้าที่เหมาะสม
+            if (loginType === 'Admin') {
+                window.location.href = "start.html";  // ถ้า login เป็น Admin ไปยัง start.html
+            } else if (loginType === 'Player') {
+                window.location.href = "play.html";  // ถ้า login เป็น Player ไปยัง play.html
+            }
+        } else {
+            alert('Invalid credentials');
+        }
+    } catch (error) {
+        console.error('Error during login:', error);
+        alert('An error occurred during login. Please try again.');
+    }
+}
+
+async function handleRegister() {
+    const username = document.getElementById('registerUsername').value;
+    const password = document.getElementById('registerPassword').value;
+    const type = document.getElementById('registerType').value;
+    const email = document.getElementById('registerEmail').value;  // เพิ่มฟิลด์ email
+
+    if (!username || !password || !email) {  // ตรวจสอบว่ามีข้อมูลครบถ้วน
+        alert('Please fill in all fields.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`http://localhost:3000/register`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ username, password, type, email }),  // ส่ง email ไปด้วย
+        });
+
+        if (response.ok) {
+            alert('Registration successful! You can now log in.');
+            showLoginForm();
+        } else {
+            const errorText = await response.text();
+            alert(`Registration failed: ${errorText}`);
+        }
+    } catch (error) {
+        console.error('Error during registration:', error);
+        alert('An error occurred during registration. Please try again.');
+    }
+}
+    
+async function handlePasswordReset() {
+    const type = document.getElementById('resetType').value;  // ดึงค่า type            
+    const username = document.getElementById('resetUsername').value;
+    const email = document.getElementById('resetEmail').value
+    const otpCode = document.getElementById('otpCode').value;
+    const newPassword = document.getElementById('newPassword').value;
+
+    if (!username || !newPassword || !email || !otpCode || !type) {
+        alert('Please fill in all fields: type, username, oldPassword, newPassword, and OTP.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/reset-password2`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ type, username, newPassword,email, otpCode }),
+        });
+
+        if (response.ok) {
+            alert('Password reset successful!');
+            showLoginForm();
+        } else {
+            const errorText = await response.text();
+            alert(`Failed to reset password: ${errorText}`);
+        }
+    } catch (error) {
+        console.error('Error during password reset:', error);
+        alert('An error occurred during password reset. Please try again.');
+    }
+}
+
+async function sendOTP() {
+    const email = document.getElementById('resetEmail').value;  // รับ email จากฟอร์ม
+    const username = document.getElementById('resetUsername').value;  // รับ username จากฟอร์ม
+    const type = document.getElementById('resetType').value;  // ดึงค่า type
+
+    if (!email || !username || !type) {
+        alert('Please enter your email and username to receive the OTP.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/send-otp`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, username, type }),  // ส่ง email และ username ไปด้วย
+        });
+
+        if (response.ok) {
+            alert('OTP has been sent to your email.');
+            // แสดงฟิลด์รหัสผ่านใหม่และปุ่มรีเซ็ตรหัสผ่านหลังจาก OTP ถูกส่ง
+            document.getElementById('newPasswordGroup').style.display = 'block';
+            document.getElementById('resetPasswordBtn').style.display = 'block';
+        } else {
+            const errorText = await response.text();
+            alert(`Failed to send OTP: ${errorText}`);
+        }
+    } catch (error) {
+        console.error('Error during OTP sending:', error);
+        alert('An error occurred while sending OTP. Please try again.');
+    }
+}
+
+        function showRegisterForm() {
+    document.getElementById('registerForm').style.display = 'block';
+    document.getElementById('loginForm').parentNode.style.display = 'none';
+    document.getElementById('resetPasswordForm').style.display = 'none';
+}
+
+function showLoginForm() {
+    document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('loginForm').parentNode.style.display = 'block';
+    document.getElementById('resetPasswordForm').style.display = 'none';
+}
+
+function showResetPasswordForm() {
+    document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('loginForm').parentNode.style.display = 'none';
+    document.getElementById('resetPasswordForm').style.display = 'block';
+}
+
+// สร้างดาวตกใหม่
+function createMeteor() {
+    const meteor = document.createElement('div');
+    meteor.classList.add('meteor');
+    document.body.appendChild(meteor);
+    
+    // กำหนดตำแหน่งและทิศทางของดาว
+    meteor.style.left = `${Math.random() * 100}vw`;
+    meteor.style.animationDuration = `${Math.random() * 5 + 5}s`;  // ทำให้ตกช้าๆ
+
+    // ทำให้ดาวมีขนาดและความโปร่งแสงแตกต่างกัน
+    meteor.style.width = `${Math.random() * 3 + 4}px`;
+    meteor.style.height = `${Math.random() * 3 + 4}px`;
+    meteor.style.opacity = Math.random() * 0.5 + 0.5;
+
+    // ลบดาวหลังจากการเคลื่อนไหวเสร็จ
+    setTimeout(() => {
+        meteor.remove();
+    }, (Math.random() * 5 + 5) * 1000);  // ลบดาวตามเวลาของ animation
+}
+
+// สร้างดาวตกทุกๆ 0.5 วินาที
+setInterval(createMeteor, 500);
+
+    </script>    
+</body>
+</html>

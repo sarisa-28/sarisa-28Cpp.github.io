@@ -1,0 +1,405 @@
+/* public/style.css */
+/* ปรับพื้นหลังให้เป็นธีมอวกาศ */
+body {
+    background: url('https://spaceth.co/wp-content/uploads/2019/03/dnb_land_ocean_ice.2012.3600x1800-1024x512.jpg') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Arial', sans-serif;
+    color: #fff;
+    text-align: center;
+    margin-right: 270px;
+    transition: all 0.3s ease;
+}
+
+/* เปลี่ยนสีข้อความเป็นสีที่ดูเข้ากับธีมอวกาศ */
+h1, h2 {
+    color: #00ccff;
+    text-shadow: 2px 2px 5px rgba(0, 204, 255, 0.7);
+}
+
+/* ปรับรูปแบบเมนูให้เหมาะสมกับธีมอวกาศ */
+#menu {
+    position: fixed;
+    top: 10%;
+    right: 0;
+    background-color: rgba(0, 0, 0, 0.8);
+    padding: 20px;
+    box-shadow: 0 0 15px cyan;
+    width: 250px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-radius: 10px;
+    animation: slide-in 0.5s ease-in-out forwards;
+}
+
+/* เมนูลิงก์ */
+#menu a {
+    color: #ffffff;
+    text-decoration: none;
+    font-size: 18px;
+    padding: 15px;
+    background-color: rgba(0, 204, 255, 0.2);
+    text-align: center;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* เมื่อ hover เมนู */
+#menu a:hover {
+    background-color: #ff7f50 ;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px cyan;
+}
+
+/* การเคลื่อนไหวเมนูเข้ามาจากข้างๆ */
+@keyframes slide-in {
+    from {
+        right: -250px;
+    }
+    to {
+        right: 0;
+    }
+}
+
+/* ฟอร์มการกรอกข้อมูล */
+form input {
+    margin: 12px 0;
+    padding: 12px;
+    width: 100%;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+/* สไตล์ปุ่ม */
+button {
+    background-color: #ff7f50;
+    color: white;
+    font-size: 18px;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+button:hover {
+    background-color: #ff6347;
+    box-shadow: 0 0 15px cyan;
+}
+
+/* การเพิ่มเอฟเฟ็กต์ดาวตก */
+@keyframes meteor-shower {
+    0% {
+        transform: translateX(-100vw);
+    }
+    100% {
+        transform: translateX(100vw);
+    }
+}
+
+.meteor {
+    position: absolute;
+    top: 0;
+    width: 10px;
+    height: 10px;
+    background-color: #ffcc00;
+    border-radius: 50%;
+    animation: meteor-shower 5s linear infinite;
+}
+
+/* การปรับขนาดของฟอนต์ */
+h1, h2 {
+    font-family: 'Roboto', sans-serif;
+    color: #4CAF50;
+    text-shadow: 2px 2px 5px rgba(0, 204, 255, 0.7);
+}
+
+/* การเคลื่อนไหวดาวตกที่ช้าและมีเอฟเฟ็กต์ */
+@keyframes meteor-shower {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+    }
+    50% {
+        transform: translateY(50vh) rotate(180deg);
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);  /* หมุนและตกไปที่ล่าง */
+    }
+}
+
+.meteor {
+    position: absolute;
+    top: -10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: meteor-shower linear infinite;
+}
+
+/* สไตล์ฟอร์ม */
+#add-question-form {
+    background-color: rgba(0, 0, 0, 0.7); /* พื้นหลังโปร่งแสง */
+    color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* เงารอบฟอร์ม */
+    max-width: 600px;
+    margin: 20px auto;
+    transition: all 0.3s ease;
+}
+
+/* ปรับขนาดช่องกรอกข้อมูล */
+#add-question-form input,
+#add-question-form textarea,
+#add-question-form select {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    margin-bottom: 15px;
+    background-color: #1e1e1e;
+    color: #fff;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+#add-question-form textarea {
+    width: 100%;
+    padding: 100px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    margin-bottom: 15px;
+    background-color: #1e1e1e;
+    color: #fff;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    resize: none; /* ป้องกันการปรับขนาด textarea */
+}
+
+#add-question-form input:focus,
+#add-question-form select:focus,
+#add-question-form textarea:focus {
+    border-color: #ff7f50; /* เปลี่ยนขอบเมื่อมีการโฟกัส */
+    outline: none;
+}
+
+/* ปุ่ม Submit */
+#add-question-form button {
+    background-color: #ff7f50;
+    color: white;
+    font-size: 18px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+#add-question-form button:hover {
+    background-color: #ff6347;
+    transform: scale(1.05); /* ขยายเมื่อ hover */
+}
+
+/* ป้ายข้อความ (label) */
+#add-question-form label {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #fff;
+    display: block;
+    text-align: left;
+}
+
+/* ฟอร์มในรูปแบบของธีมอวกาศ */
+#add-question-form {
+    background: linear-gradient(135deg, #3a3a3a, #0b0b0b); /* พื้นหลังแบบไล่สี */
+    border: 2px solid #444;
+    box-shadow: 0 0 15px cyan; /* เงาแบบลึกลับ */
+}
+
+/* อนิเมชั่นสำหรับฟอร์ม */
+#add-question-form {
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/*อัตนัย*/
+/* สไตล์ฟอร์ม */
+#add-question-form2 {
+    background-color: rgba(0, 0, 0, 0.7); /* พื้นหลังโปร่งแสง */
+    color: #fff;
+    border-radius: 10px;
+    padding: 30px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* เงารอบฟอร์ม */
+    max-width: 600px;
+    margin: 20px auto;
+    transition: all 0.3s ease;
+}
+
+/* ปรับขนาดช่องกรอกข้อมูล */
+#add-question-form2 input,
+#add-question-form2 select {
+    width: 100%;
+    padding: 15px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    margin-bottom: 15px;
+    background-color: #1e1e1e;
+    color: #fff;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+}
+
+#add-question-form2 textarea {
+    width: 100%;
+    padding: 100px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #444;
+    margin-bottom: 15px;
+    background-color: #1e1e1e;
+    color: #fff;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    resize: none; /* ป้องกันการปรับขนาด textarea */
+}
+
+#add-question-form2 input:focus,
+#add-question-form2 select:focus,
+#add-question-form2 textarea:focus {
+    border-color: #ff7f50; /* เปลี่ยนขอบเมื่อมีการโฟกัส */
+    outline: none;
+}
+
+/* ปุ่ม Submit */
+#add-question-form2 button {
+    background-color: #ff7f50;
+    color: white;
+    font-size: 18px;
+    padding: 15px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+#add-question-form2 button:hover {
+    background-color: #ff6347;
+    transform: scale(1.05); /* ขยายเมื่อ hover */
+}
+
+/* ป้ายข้อความ (label) */
+#add-question-form2 label {
+    font-size: 16px;
+    margin-bottom: 5px;
+    color: #fff;
+    display: block;
+    text-align: left;
+}
+
+/* ฟอร์มในรูปแบบของธีมอวกาศ */
+#add-question-form2 {
+    background: linear-gradient(135deg, #3a3a3a, #0b0b0b); /* พื้นหลังแบบไล่สี */
+    border: 2px solid #444;
+    box-shadow: 0 0 15px cyan; /* เงาแบบลึกลับ */
+}
+
+/* อนิเมชั่นสำหรับฟอร์ม */
+#add-question-form2 {
+    animation: fadeIn 1s ease-out;
+}
+
+@keyframes fadeIn {
+    0% { opacity: 0; transform: translateY(20px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+/* สไตล์ของจรวด */
+.rocket {
+    position: absolute;
+    bottom: 100px;
+    left: 50%;
+    width: 100px;
+    height: 300px;
+    background: linear-gradient(to bottom, #fff, #ff6347);
+    border-radius: 10px 10px 0 0;
+    animation: rocket-launch 3s ease-out forwards;
+    z-index: 100;
+}
+
+/* เอฟเฟ็กต์การพุ่งขึ้นของจรวด */
+@keyframes rocket-launch {
+    0% {
+        bottom: -200px;
+        transform: translateX(-50%) scale(1);
+    }
+    50% {
+        transform: translateX(-50%) scale(1.2);
+    }
+    100% {
+        bottom: 150px;
+        transform: translateX(-50%) scale(1.5);
+    }
+}
+
+/* ข้อความคะแนนที่จะแสดงหลังจากจรวดถึงตำแหน่ง */
+.rocket-score {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 40px;
+    color: #ffcc00;
+    font-weight: bold;
+    opacity: 0;
+    animation: show-score 3s ease-out forwards;
+    z-index: 101;
+}
+
+/* เอฟเฟ็กต์การแสดงคะแนน */
+@keyframes show-score {
+    0% {
+        opacity: 0;
+        transform: translateY(50px) translateX(-50%);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) translateX(-50%);
+    }
+}
+
+#puzzle-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.puzzle-piece {
+    width: 100px;
+    height: 100px;
+    margin: 10px;
+    background-color: #4CAF50;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s;
+}
+
+.puzzle-piece:hover {
+    transform: scale(1.1);
+}

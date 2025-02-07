@@ -1,0 +1,300 @@
+<!--public/scores.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Scores</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #1e1e2f;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            margin-top: 20px;
+            color: yellow;
+        }
+
+         /* แถบเมนูข้างบน */
+         #top-menu {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: sticky;
+            top: 1%;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: gradient-animation 6s ease infinite;
+            border-bottom: 5px solid cyan;
+            box-shadow: 0 0 20px cyan;
+        }
+
+        #top-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 0 15px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #top-menu a:hover {
+            background-color: #ff6f61;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px cyan;
+        }
+
+        #scores-table {
+            width: 80%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: #2e2e3e;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 15px cyan;
+        }
+
+        #scores-table th, #scores-table td {
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #444;
+        }
+
+        #scores-table th {
+            background: #444;
+        }
+
+        #scores-table td {
+            background: #555;
+        }
+
+        #back-button {
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: #fff;
+            background: #ff6347;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        #back-button:hover {
+            background: #ff4500;
+        }
+
+        .search-bar {
+            margin-top: 20px;
+            width: 30%;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #555;
+            color: #ffffff;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: space-around;
+            width: 80%;
+        }
+        /* สร้างการเคลื่อนไหวให้ gradient */
+        @keyframes gradient-animation {
+    0%, 100% {
+        background: linear-gradient(45deg, #0f2027, #203a43, #2c5364); /* เขียวเข้มไปน้ำเงิน */
+    }
+    50% {
+        background: linear-gradient(45deg, #232526, #414345, #485563); /* ดำเข้มไปน้ำเงิน */
+    }
+}
+
+    </style>
+</head>
+<body>
+        <!-- แถบเมนูข้างบน -->
+        <div id="top-menu">
+            <a href="start.html"><i class="fa-solid fas fa-play fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Start</a>
+            <a href="addquestion.html">🤔Add Questions💭</a>
+            <a href="roomcode.html"><i class="fas fa-key fa-solid fa-flip"  style="--fa-animation-duration: 3s; color: cyan;"></i> Set Room Code</a>  
+            <a href="seeroom.html">🚩View Room Codes👀</a> 
+            <a href="scores.html"><i class="fas fa-trophy fa-beat" style="color: cyan;"></i> View Scores</a>
+            <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+            <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
+        </div>
+    
+    <h1>🎉 Player Scores 🎊</h1>
+    <div class="search-container">
+        <input type="text" id="username-search" class="search-bar" placeholder="Search by Username...">
+        <input type="text" id="roomcode-search" class="search-bar" placeholder="Search by Room Code...">
+        <input type="date" id="date-search" class="search-bar" placeholder="Search by Date...">
+    </div>
+    
+    <table id="scores-table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Score</th>
+                <th>Username</th>
+                <th>Room Code</th>
+                <th>Date Played</th>
+                <th>Time Played</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- คะแนนจะถูกเพิ่มที่นี่ -->
+        </tbody>
+    </table>
+
+    <button id="back-button">Back To Home</button>
+
+    <script>
+        const username = sessionStorage.getItem('username');
+        if (username) {
+            console.log(`Logged-in Username: ${username}`);
+            //document.getElementById('username-display').innerText = username;
+        } else {
+            console.warn('No username found in sessionStorage');
+        }
+
+
+async function loadScores() {
+    try {
+        const response = await fetch('/scores');
+        const scores = await response.json();
+        console.log(scores); // ตรวจสอบข้อมูลที่ดึงมา
+
+        const tbody = document.getElementById('scores-table').querySelector('tbody');
+        
+        // ลูปเพื่อเพิ่มข้อมูลใหม่เข้าไปในตารางโดยไม่ลบข้อมูลเก่า
+        scores.forEach(score => {
+            const row = document.createElement('tr');
+            
+            // สร้างเซลล์สำหรับ Name
+            const nameCell = document.createElement('td');
+            nameCell.innerText = score.name || 'N/A';
+
+            // สร้างเซลล์สำหรับ Score
+            const scoreCell = document.createElement('td');
+            scoreCell.innerText = score.score || 'N/A';
+
+            // สร้างเซลล์สำหรับ Username
+            const usernameCell = document.createElement('td');
+            usernameCell.innerText = score.username || 'N/A';
+
+            // สร้างเซลล์สำหรับ Room Code
+            const roomCodeCell = document.createElement('td');
+            roomCodeCell.innerText = score.roomCode || 'N/A';
+
+            // แปลงค่า datePlayed ให้เป็นเวลาประเทศไทย
+            const datePlayed = new Date(score.datePlayed);
+            const dateCell = document.createElement('td');
+            dateCell.innerText = datePlayed.toLocaleDateString('th-TH');  // ใช้ locale ของประเทศไทย
+
+            const timeCell = document.createElement('td');
+            timeCell.innerText = datePlayed.toLocaleTimeString('th-TH');  // แสดงเวลาในประเทศไทย
+
+            // เพิ่มเซลล์ทั้งหมดในแถว
+            row.appendChild(nameCell);
+            row.appendChild(scoreCell);
+            row.appendChild(usernameCell);
+            row.appendChild(roomCodeCell);
+            row.appendChild(dateCell);
+            row.appendChild(timeCell);
+
+            // เพิ่มแถวใหม่เข้าไปในตาราง
+            tbody.appendChild(row);
+        });
+    } catch (error) {
+        console.error('Error fetching scores:', error);
+    }
+}
+
+        window.onload = loadScores;
+
+        document.getElementById('back-button').addEventListener('click', () => {
+            window.location.href = 'start.html';
+        });
+
+        function filterScores() {
+        const usernameSearch = document.getElementById('username-search').value.toLowerCase();
+        const roomCodeSearch = document.getElementById('roomcode-search').value.toLowerCase();
+        const dateSearch = document.getElementById('date-search').value;  // ค่าจากช่องค้นหาวันที่
+        const rows = document.querySelectorAll('#scores-table tbody tr');
+
+        // ฟังก์ชันแปลงวันที่ให้เป็นรูปแบบ dd/mm/yyyy
+        function formatDateToTH(date) {
+            const d = new Date(date);
+            const day = d.getDate();
+            const month = d.getMonth() + 1; // เดือนใน JavaScript จะเริ่มที่ 0
+            const year = d.getFullYear() + 543; // การแปลงเป็นปี พ.ศ.
+            return `${day}/${month}/${year}`;
+        }
+
+        rows.forEach(row => {
+            const username = row.cells[2].innerText.toLowerCase();
+            const roomCode = row.cells[3].innerText.toLowerCase();
+            const date = row.cells[4].innerText; // วันที่ในตาราง
+
+            // แปลงวันที่ที่ค้นหามาให้เป็นรูปแบบเดียวกับวันที่ในตาราง
+            const formattedDateSearch = formatDateToTH(dateSearch);
+
+            // กรองตามเงื่อนไขที่เลือก
+            const matchUsername = username.includes(usernameSearch) || usernameSearch === ''; // ถ้าไม่มีการค้นหา username ก็ให้ผ่าน
+            const matchRoomCode = roomCode.includes(roomCodeSearch) || roomCodeSearch === ''; // ถ้าไม่มีการค้นหา roomCode ก็ให้ผ่าน
+            const matchDate = (date === formattedDateSearch) || formattedDateSearch === ''; // เปรียบเทียบวันที่
+
+            // กรองการแสดงผลตามเงื่อนไขที่เลือก
+            if (
+                (usernameSearch && matchUsername && roomCodeSearch === '' && dateSearch === '') || 
+                (roomCodeSearch && matchRoomCode && usernameSearch === '' && dateSearch === '') ||
+                (dateSearch && matchDate && usernameSearch === '' && roomCodeSearch === '') || 
+                (usernameSearch && roomCodeSearch && matchUsername && matchRoomCode) || 
+                (usernameSearch && dateSearch && matchUsername && matchDate) ||
+                (roomCodeSearch && dateSearch && matchRoomCode && matchDate) || 
+                (usernameSearch && roomCodeSearch && dateSearch && matchUsername && matchRoomCode && matchDate) || 
+                (!usernameSearch && !roomCodeSearch && !dateSearch)  // ถ้าไม่มีการกรอกอะไรเลย ก็ให้แสดงทุกแถว
+            ) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    }
+
+document.getElementById('username-search').addEventListener('input', filterScores);
+document.getElementById('roomcode-search').addEventListener('input', filterScores);
+document.getElementById('date-search').addEventListener('input', filterScores); // เพิ่มการฟังเหตุการณ์การค้นหาจากวันที่
+
+        // สร้างดาวตก
+        function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.classList.add('meteor');
+            document.body.appendChild(meteor);
+            meteor.style.left = `${Math.random() * 100}vw`;
+            meteor.style.animationDuration = `${Math.random() * 5 + 5}s`;
+            meteor.style.width = `${Math.random() * 3 + 4}px`;
+            meteor.style.height = `${Math.random() * 3 + 4}px`;
+            meteor.style.opacity = Math.random() * 0.5 + 0.5;
+
+            setTimeout(() => meteor.remove(), (Math.random() * 5 + 5) * 1000);
+        }
+
+        setInterval(createMeteor, 500);
+    </script>
+</body>
+</html>

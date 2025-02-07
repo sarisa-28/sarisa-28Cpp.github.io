@@ -1,0 +1,287 @@
+<!--public/seeroom.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Room Codes</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+    background: url('https://spaceth.co/wp-content/uploads/2019/03/dnb_land_ocean_ice.2012.3600x1800-1024x512.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+        /* แถบเมนูข้างบน */
+        #top-menu {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: gradient-animation 6s ease infinite;
+            border-bottom: 5px solid cyan;
+            box-shadow: 0 0 20px cyan;
+        }
+
+        #top-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 0 15px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #top-menu a:hover {
+            background-color: #ff6f61;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px cyan;
+        }
+
+        @keyframes gradient-animation {
+    0%, 100% {
+        background: linear-gradient(45deg, #0f2027, #203a43, #2c5364); /* เขียวเข้มไปน้ำเงิน */
+    }
+    50% {
+        background: linear-gradient(45deg, #232526, #414345, #485563); /* ดำเข้มไปน้ำเงิน */
+    }
+}
+
+        /* กล่องแสดง Room Codes */
+        .room-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+            margin: 20px auto;
+        }
+
+        .room-code {
+            width: 200px;
+            padding: 15px;
+            text-align: center;
+            border: 2px solid chocolate;
+            border-radius: 10px;
+            background: #fff3e0;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 0 15px cyan;
+        }
+
+        .room-code:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4);
+            background-color: #ff6347;
+        }
+
+        /* กล่องแสดงรายละเอียด Room */
+        .room-details {
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 800px;
+            border: 2px solid #ff6f61;
+            border-radius: 15px;
+            background-color: #fff4f1;
+            box-shadow: 0 0 15px cyan;;
+        }
+
+        .room-details h4 {
+            font-size: 18px;
+
+        }
+
+        .room-details h3 {
+            font-size: 25px;
+            color: #ff6f61;
+        }
+
+
+        .question {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            background: #fffbf2;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .question h4 {
+            color: #ff6f61;
+            font-size: 25px;
+        }
+
+        .question p {
+            margin: 0;
+            padding: 0;
+            font-size: 17px;
+        }
+        /* การเพิ่มเอฟเฟ็กต์ดาวตก */
+
+/* การเคลื่อนไหวดาวตกที่ช้าและมีเอฟเฟ็กต์ */
+@keyframes meteor-shower {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+    }
+    50% {
+        transform: translateY(50vh) rotate(180deg);
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);  /* หมุนและตกไปที่ล่าง */
+    }
+}
+
+.meteor {
+    position: absolute;
+    top: -10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: meteor-shower linear infinite;
+}
+    </style>
+</head>
+<body>
+    <!-- แถบเมนูข้างบน -->
+    <div id="top-menu">
+        <a href="start.html"><i class="fa-solid fas fa-play fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Start</a>
+        <a href="addquestion.html">🤔Add Questions💭</a>
+        <a href="roomcode.html"><i class="fas fa-key fa-solid fa-flip"  style="--fa-animation-duration: 3s; color: cyan;"></i> Set Room Code</a>  
+        <a href="seeroom.html">🚩View Room Codes👀</a> 
+        <a href="scores.html"><i class="fas fa-trophy fa-beat" style="color: cyan;"></i> View Scores</a>
+        <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+        <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
+    </div>
+
+    <h1 style="text-align: center; color: #ff6f61; text-shadow: 2px 2px 5px rgba(0, 204, 255, 0.7); font-size: 40px;">☄️ Available Room Codes 💥</h1>
+    <div id="room-codes" class="room-list">
+        <!-- Room codes will be dynamically added here -->
+    </div>
+
+    <h1 style="text-align: center; color: #ff6f61;text-shadow: 2px 2px 5px rgba(0, 204, 255, 0.7);">👇🏽 Room Details 👇🏽</h1>
+    <div id="room-details" class="room-details">
+        <p style="text-align: center;">Select a room code to see details.</p>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const roomCodesContainer = document.getElementById('room-codes');
+            const roomDetailsContainer = document.getElementById('room-details');
+
+            // ดึงข้อมูล RoomCode ทั้งหมด
+            fetch('/api/roomcodes')
+                .then(response => response.json())
+                .then(data => {
+                    roomCodesContainer.innerHTML = '';
+                    data.forEach(room => {
+                        const roomDiv = document.createElement('div');
+                        roomDiv.classList.add('room-code');
+                        roomDiv.textContent = `Room Code: ${room.roomCode}`;
+
+                        // เพิ่มปุ่มลบสำหรับแต่ละ Room Code
+                        const deleteBtn = document.createElement('button');
+                        deleteBtn.textContent = 'Delete';
+                        deleteBtn.style.backgroundColor = 'red';
+                        deleteBtn.style.color = 'white';
+                        deleteBtn.style.border = 'none';
+                        deleteBtn.style.padding = '5px 10px';
+                        deleteBtn.style.marginTop = '10px';
+                        deleteBtn.addEventListener('click', (event) => {
+                            event.stopPropagation(); // หยุดการคลิกจากการเลือก Room Code
+                            deleteRoomCode(room.roomCode, roomDiv);
+                        });
+
+                        roomDiv.appendChild(deleteBtn);
+                        roomDiv.addEventListener('click', () => fetchRoomDetails(room.roomCode));
+                        roomCodesContainer.appendChild(roomDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error fetching room codes:', error);
+                });
+
+            // ฟังก์ชันดึงข้อมูลคำถามใน RoomCode ที่เลือก
+            function fetchRoomDetails(roomCode) {
+                fetch(`/api/roomcodes/${roomCode}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        roomDetailsContainer.innerHTML = `
+                            <h3>Room Code: ${data.roomCode}</h3>
+                            <h4>Total Multiple Choice: ${data.totalmultipleChoice}</h4>
+                            <h4>Total Essay: ${data.totalEssay}</h4>
+                            <h4>Total Question: ${data.selectedQuestions.length}</h4>
+                            <h4>Total Score: ${data.totalScore}</h4>
+                            <h4>Total Time: ${data.totalTime} s. </h4>
+                        `;
+
+                        if (data.selectedQuestions.length === 0) {
+                            roomDetailsContainer.innerHTML += '<p>No questions available for this room code.</p>';
+                            return;
+                        }
+
+                        data.selectedQuestions.forEach(question => {
+    roomDetailsContainer.innerHTML += `
+        <div class="question">
+            <p>Type: ${question.type}</p>
+            <h4>${question.question}</h4>
+            <!-- สำหรับคำถามอัตนัย -->
+            <p>Options: ${question.options && question.options.length > 0 ? question.options.join(', ') : 'ไม่มี Options ในคำถามนี้'}</p>
+            <!-- ถ้าเป็นคำถามอัตนัย -->
+            <p>Correct Answer: ${question.correct ? question.correct : 'ไม่มี Options ในคำถามนี้'}</p>
+            <p>Timer: ${question.timer} seconds</p>
+            <p>Level: ${question.level}</p>
+        </div>
+
+    `;
+});
+
+                    })
+                    .catch(error => {
+                        console.error('Error fetching room details:', error);
+                    });
+            }
+
+            // ฟังก์ชันลบ Room Code
+            function deleteRoomCode(roomCode, roomDiv) {
+                fetch(`/api/roomcode/${roomCode}`, {
+                    method: 'DELETE',
+                })
+                .then(response => {
+                    if (response.ok) {
+                        roomDiv.remove(); // ลบแสดงผล Room Code ที่ถูกลบ
+                    } else {
+                        alert('Error deleting room code');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error deleting room code:', error);
+                });
+            }
+        });
+
+        // สร้างดาวตกใหม่
+        function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.classList.add('meteor');
+            document.body.appendChild(meteor);
+
+            meteor.style.left = `${Math.random() * 100}vw`;
+            meteor.style.animationDuration = `${Math.random() * 5 + 5}s`;
+
+            meteor.style.width = `${Math.random() * 3 + 4}px`;
+            meteor.style.height = `${Math.random() * 3 + 4}px`;
+            meteor.style.opacity = Math.random() * 0.5 + 0.5;
+
+            setTimeout(() => {
+                meteor.remove();
+            }, (Math.random() * 5 + 5) * 1000);
+        }
+
+        setInterval(createMeteor, 500);
+    </script>
+</body>
+</html>

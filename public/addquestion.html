@@ -1,0 +1,272 @@
+<!--public/addquestion.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finalcpp Quiz</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- เพิ่มลิงค์ Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* เปลี่ยนสีข้อความและเพิ่มเงาที่หัวข้อ */
+h1 {
+    color: orangered;
+    font-size: 50px;
+    text-shadow: 3px 3px 6px cyan;
+    margin-bottom: 20px;
+}
+
+/* กรอบและพื้นหลังสำหรับ select */
+.question-select {
+    background: rgba(0, 0, 0, 0.6); /* พื้นหลังโปร่งแสง */
+    border-radius: 10px;
+    padding: 15px;
+    margin: 20px 0;
+    box-shadow: 0 4px 10px cyan; /* เงา */
+    max-width: 400px;
+    margin: 20px auto;
+}
+
+/* สไตล์สำหรับ select */
+.question-select select {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #1e1e1e;
+    color: #fff;
+    border: 2px solid #444;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+/* สไตล์เมื่อมีการโฟกัส */
+.question-select select:focus {
+    border-color: #ff7f50;
+    outline: none;
+    box-shadow: 0 0 10px #ff7f50;
+}
+
+/* สไตล์ป้ายข้อความ */
+.question-select label {
+    font-size: 18px;
+    color: #fff;
+    margin-bottom: 8px;
+    display: block;
+    text-align: left;
+}
+
+    </style>
+</head>
+<body>
+        <!-- แถบเมนูทางขวา -->
+        <div id="menu">
+            <a href="start.html"><i class="fa-solid fas fa-play fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Start</a>
+            <a href="addquestion.html">🤔Add Questions💭</a>
+            <a href="roomcode.html"><i class="fas fa-key fa-solid fa-flip"  style="--fa-animation-duration: 3s; color: cyan;"></i> Set Room Code</a>  
+            <a href="seeroom.html">🚩View Room Codes👀</a> 
+            <a href="scores.html"><i class="fas fa-trophy fa-beat" style="color: cyan;"></i> View Scores</a>
+            <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+            <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
+        </div>
+        
+        <h1>👩🏼‍💻 Add Question 👨🏼‍💻</h1>
+
+        <!-- เลือกประเภทคำถาม -->
+        <div class="question-select">
+            <label for="question-type">Select Question Type:</label>
+            <select id="question-type" required>
+                <option value="" disabled selected>Select Type</option>
+                <option value="multiple-choice">เพิ่มคำถามแบบปรนัย(multiple-choice)</option>
+                <option value="essay">เพิ่มคำถามแบบอัตนัย(essay)</option>
+            </select>
+        </div>        
+    
+    <!-- ฟอร์มสำหรับคำถามแบบปรนัย -->
+    <form id="add-question-form" class="question-form" style="display: none;">
+        <label for="new-question">Question</label>
+        <textarea id="new-question" rows="4" placeholder="Enter your question here..." required></textarea>
+        
+        <label for="option1">Option 1</label>
+        <input type="text" id="option1" placeholder="Option 1" required>
+        
+        <label for="option2">Option 2</label>
+        <input type="text" id="option2" placeholder="Option 2" required>
+        
+        <label for="option3">Option 3</label>
+        <input type="text" id="option3" placeholder="Option 3" required>
+        
+        <label for="option4">Option 4</label>
+        <input type="text" id="option4" placeholder="Option 4" required>
+        
+        <label for="correct-answer">Correct Option Index</label>
+        <input type="number" id="correct-answer" placeholder="Correct Option Index" required>
+        
+        <label for="question-timer">Time in seconds</label>
+        <input type="number" id="question-timer" placeholder="Time in seconds" required>
+        
+        <label for="question-level">Level</label>
+        <select id="question-level" required>
+            <option value="" disabled selected>Select Level</option>
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+        </select>
+        
+        <button type="submit">Add Question</button>
+    </form>
+
+    <!-- ฟอร์มสำหรับคำถามแบบอัตนัย -->
+    <form id="add-question-form2" class="question-form" style="display: none;">
+        <label for="new-question2">Question</label>
+        <textarea id="new-question2" placeholder="Enter your question here..." required></textarea>
+        
+        <label for="correct-answer2">Correct Answer</label>
+        <input type="text" id="correct-answer2" placeholder="Correct Answer" required>
+        
+        <label for="question-timer2">Time in seconds</label>
+        <input type="number" id="question-timer2" placeholder="Time in seconds" required>
+        
+        <label for="question2-level">Level</label>
+        <select id="question2-level" required>
+            <option value="" disabled selected>Select Level</option>
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+            <option value="3">Level 3</option>
+        </select>
+        
+        <button type="submit">Add Question</button>
+    </form>
+    
+    <a href="start.html" style="color:cyan;">Back To Home</a>
+    
+    <script>
+        // ฟังก์ชันในการสลับฟอร์มระหว่างคำถามแบบปรนัยและอัตนัย
+        document.getElementById('question-type').addEventListener('change', (event) => {
+            const questionType = event.target.value;
+            const form1 = document.getElementById('add-question-form');
+            const form2 = document.getElementById('add-question-form2');
+            
+            if (questionType === 'multiple-choice') {
+                form1.style.display = 'block';
+                form2.style.display = 'none';
+            } else if (questionType === 'essay') {
+                form1.style.display = 'none';
+                form2.style.display = 'block';
+            }
+        });
+        
+        // ฟังก์ชันสำหรับการเพิ่มคำถามแบบปรนัย
+        document.getElementById('add-question-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const newQuestion = document.getElementById('new-question').value;
+            const option1 = document.getElementById('option1').value;
+            const option2 = document.getElementById('option2').value;
+            const option3 = document.getElementById('option3').value;
+            const option4 = document.getElementById('option4').value;
+            const correctAnswer = parseInt(document.getElementById('correct-answer').value) - 1;
+            const questionTimer = parseInt(document.getElementById('question-timer').value);
+            const level = parseInt(document.getElementById('question-level').value);
+
+            const quizData = {
+                type: "multiple-choice", // ✅ เพิ่มประเภทของคำถาม
+                question: newQuestion,
+                options: [option1, option2, option3, option4],
+                correct: correctAnswer,
+                timer: questionTimer,
+                level: level
+            };
+
+            try {
+                const response = await fetch('/add-quiz', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(quizData)
+                });
+
+                if (response.ok) {
+                    alert('Question added successfully!');
+                    document.getElementById('add-question-form').reset();
+                } else {
+                    alert('Error adding question');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+        // ฟังก์ชันสำหรับการเพิ่มคำถามแบบอัตนัย
+        document.getElementById('add-question-form2').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const newQuestion = document.getElementById('new-question2').value;
+            const correctAnswer = document.getElementById('correct-answer2').value;
+            const questionTimer = parseInt(document.getElementById('question-timer2').value);
+            const level = parseInt(document.getElementById('question2-level').value);
+
+            const quizData = {
+                type: "essay", // ✅ เพิ่มประเภทของคำถาม
+                question: newQuestion,
+                correct: correctAnswer,
+                timer: questionTimer,
+                level: level
+            };
+
+            try {
+                const response = await fetch('/add-quiz', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(quizData)
+                });
+
+                if (response.ok) {
+                    alert('Question added successfully!');
+                    document.getElementById('add-question-form2').reset();
+                } else {
+                    alert('Error adding question');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        });
+
+// เรียกใช้ฟังก์ชันเมื่อหน้าเว็บโหลดเสร็จ
+window.onload = () => {
+    const quizContainer = document.getElementById('quiz-container');
+    if (quizContainer) {
+        quizContainer.style.display = 'none';
+    }
+};
+
+// สร้างดาวตกใหม่
+function createMeteor() {
+    const meteor = document.createElement('div');
+    meteor.classList.add('meteor');
+    document.body.appendChild(meteor);
+    
+    // กำหนดตำแหน่งและทิศทางของดาว
+    meteor.style.left = `${Math.random() * 100}vw`;
+    meteor.style.animationDuration = `${Math.random() * 5 + 5}s`;  // ทำให้ตกช้าๆ
+
+    // ทำให้ดาวมีขนาดและความโปร่งแสงแตกต่างกัน
+    meteor.style.width = `${Math.random() * 3 + 4}px`;
+    meteor.style.height = `${Math.random() * 3 + 4}px`;
+    meteor.style.opacity = Math.random() * 0.5 + 0.5;
+
+    // ลบดาวหลังจากการเคลื่อนไหวเสร็จ
+    setTimeout(() => {
+        meteor.remove();
+    }, (Math.random() * 5 + 5) * 1000);  // ลบดาวตามเวลาของ animation
+}
+
+// สร้างดาวตกทุกๆ 0.5 วินาที
+setInterval(createMeteor, 500);
+
+    </script>
+</body>
+</html>

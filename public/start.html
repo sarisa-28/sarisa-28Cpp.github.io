@@ -1,0 +1,385 @@
+<!--public/start.html--> 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Game</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: url('https://spaceth.co/wp-content/uploads/2019/03/dnb_land_ocean_ice.2012.3600x1800-1024x512.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        /* แถบเมนูข้างบน */
+        #top-menu {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: gradient-animation 6s ease infinite;
+            border-bottom: 5px solid cyan;
+            box-shadow: 0 0 20px cyan;
+        }
+
+        #top-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 0 15px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #top-menu a:hover {
+            background-color: #ff6f61;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px cyan;
+        }
+
+        @keyframes gradient-animation {
+    0%, 100% {
+        background: linear-gradient(45deg, #0f2027, #203a43, #2c5364); /* เขียวเข้มไปน้ำเงิน */
+    }
+    50% {
+        background: linear-gradient(45deg, #232526, #414345, #485563); /* ดำเข้มไปน้ำเงิน */
+    }
+}
+
+        /* คลุมหน้าจอด้วยพื้นหลังเบลอ */
+#overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    z-index: 999;
+}
+
+        /* ป๊อบอัพ */
+        #player-list-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 40, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px cyan;
+            z-index: 1000;
+        }
+
+        #player-list-popup h3 {
+            font-size: 24px;
+            color: cyan;
+            text-shadow: 0 0 10px cyan;
+        }
+
+        #player-list-popup ul {
+            list-style-type: none;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        #player-list-popup ul li {
+            background: rgba(255, 255, 255, 0.2);
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        /* ปุ่มในป๊อบอัพ */
+        #start-game-in-popup {
+            background: linear-gradient(45deg, #ff0099, #ff6600);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        #start-game-in-popup:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px pink;
+        }
+
+        /* การเคลื่อนไหวดาวตกที่ช้าและมีเอฟเฟ็กต์ */
+@keyframes meteor-shower {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+    }
+    50% {
+        transform: translateY(50vh) rotate(180deg);
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);  /* หมุนและตกไปที่ล่าง */
+    }
+}
+
+.meteor {
+    position: absolute;
+    top: -10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: meteor-shower linear infinite;
+}
+
+/* กรอบกล่อง */
+#game-container {
+    background: rgba(0, 0, 40, 0.8); /* สีพื้นหลังแบบกึ่งโปร่งใส */
+    border: 3px solid cyan;
+    border-radius: 15px;
+    padding: 30px;
+    width: 350px;
+    margin: 50px auto;
+    box-shadow: 0 0 15px cyan, 0 0 30px blue;
+    text-align: center;
+}
+
+/* ปรับแต่งหัวข้อ */
+h1 {
+            color:red;
+            text-shadow: 0 0 10px cyan, 0 0 20px blue;
+            font-size: 40px;
+            margin-top: 50px;
+        }
+
+
+/* สไตล์ฟอร์ม */
+#game-container label {
+    font-size: 18px;
+    color: white;
+}
+
+#game-container input {
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid cyan;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 18px;
+    outline: none;
+    width: 80%;
+    margin-top: 10px;
+}
+
+/* ปุ่ม */
+#game-container button {
+    background: linear-gradient(45deg, rgb(238, 107, 19), #4aa44f);
+    border: none;
+    color: black;
+    padding: 12px 24px;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-top: 15px;
+    width: 100%;
+}
+
+#game-container button:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px cyan;
+}
+
+/* ข้อความต้อนรับ */
+#user-welcome {
+    font-size: 20px;
+    margin: 20px 0;
+    color: #fff;
+    text-align: center;
+}
+
+#user-welcome p {
+    font-size: 25px;
+    color: #f4a261;
+}
+
+    
+    </style>
+</head>
+<body>
+
+        <!-- แถบเมนูข้างบน -->
+        <div id="top-menu">
+            <a href="start.html"><i class="fa-solid fas fa-play fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Start</a>
+            <a href="addquestion.html">🤔Add Questions💭</a>
+            <a href="roomcode.html"><i class="fas fa-key fa-solid fa-flip"  style="--fa-animation-duration: 3s; color: cyan;"></i> Set Room Code</a>  
+            <a href="seeroom.html">🚩View Room Codes👀</a> 
+            <a href="scores.html"><i class="fas fa-trophy fa-beat" style="color: cyan;"></i> View Scores</a>
+            <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+            <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
+        </div>
+
+        <div id="game-container">
+                    <!-- แสดงชื่อผู้ใช้งาน -->
+<div id="user-welcome" style="text-align: center; font-size: 20px;">
+    <p>🙏 Welcome 🙏</p>
+    <p><span id="username-display"></span>!</p>
+</div>
+            <h1>🚀 Start Game 🏅</h1>
+            <label for="room-code">Enter Room Code:</label>
+            <input type="text" id="room-code" placeholder="Enter Room Code">
+            <button id="start-game">Join Room</button>
+        </div>
+
+        <!-- คลุมพื้นหลังให้เบลอ -->
+<div id="overlay"></div>
+        
+    <!-- ป๊อบอัพแสดงรายชื่อผู้เล่น -->
+    <div id="player-list-popup">
+        <button id="close-popup" style="position: absolute; top: 10px; right: 15px; background: none; border: none; color: white; font-size: 20px; cursor: pointer;">✖</button>
+        <h3>Players in Room: <span id="room-code-display"></span></h3>
+        <ul id="player-list">
+            <!-- รายชื่อผู้เล่นจะถูกแสดงที่นี่ -->
+        </ul>
+        <p>Total Players: <span id="total-players">0</span></p>
+        <button id="start-game-in-popup">Start Game</button>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+
+    <script>
+        const socket = io('http://localhost:3000');  // URL ของเซิร์ฟเวอร์
+        const roomCodeInput = document.getElementById('room-code');
+        const playerListPopup = document.getElementById('player-list-popup');
+        const playerList = document.getElementById('player-list');
+        const totalPlayersDisplay = document.getElementById('total-players');
+        const roomCodeDisplay = document.getElementById('room-code-display');
+        const startGameButton = document.getElementById('start-game');
+        const startGameInPopupButton = document.getElementById('start-game-in-popup');
+
+            // ดึงชื่อผู้ใช้จาก sessionStorage หรือ localStorage ถ้ามี
+    const username = sessionStorage.getItem('username'); // หรือใช้ localStorage.getItem('username');
+    if (username) {
+        document.getElementById('username-display').innerText = username;
+    }
+
+        let currentRoomCode = '';
+
+        startGameButton.addEventListener('click', async () => {
+            const roomCode = roomCodeInput.value;
+            if (!roomCode) {
+                alert('Please enter a room code.');
+                return;
+            }
+
+            try {
+                const response = await fetch(`/roomcode/${roomCode}`);
+                const roomData = await response.json();
+
+                if (roomData && Array.isArray(roomData.selectedQuestions) && roomData.selectedQuestions.length > 0) {
+                    currentRoomCode = roomCode;
+                    roomCodeDisplay.textContent = roomCode; // แสดง room code ในป๊อบอัพ
+
+                    let isAdmin = true; // กำหนดให้เป็น admin ถ้าเงื่อนไขตรงกัน
+                    socket.emit('join-room', roomCode, username, isAdmin);
+                    
+                    // แสดงป๊อบอัพรายชื่อผู้เล่น
+                    playerListPopup.style.display = 'block';
+
+                    // รอข้อมูลการอัปเดตจาก Socket.IO
+                    socket.on('update-player-list', (players) => {
+                        playerList.innerHTML = '';  // ล้างรายชื่อผู้เล่นเก่า
+                        players.forEach(player => {
+                            const li = document.createElement('li');
+                            li.textContent = player;
+                            playerList.appendChild(li);
+                        });
+                        totalPlayersDisplay.textContent = players.length;
+                    });
+                } else {
+                    alert('Invalid Room Code or no questions found.');
+                }
+            } catch (error) {
+                console.error('Error joining the room:', error);
+            }
+        });
+
+        // เมื่อกดปุ่ม Start Game ในป๊อบอัพ
+        startGameInPopupButton.addEventListener('click', async () => {
+            const startResponse = await fetch(`/start-game/${currentRoomCode}`, { method: 'POST' });
+            if (startResponse.ok) {
+                alert('Game has started! All players are now ready.');
+            }
+        });
+
+        startGameButton.addEventListener('click', () => {
+    if (roomCodeInput.value.trim() !== '') {
+        playerListPopup.style.display = 'block';
+        document.getElementById('overlay').style.display = 'block'; // แสดงพื้นหลังเบลอ
+    }
+});
+
+
+        document.getElementById('close-popup').addEventListener('click', () => {
+    document.getElementById('player-list-popup').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';  // ซ่อนพื้นหลังเบลอ
+});
+
+
+const overlay = document.getElementById('overlay');
+
+function showPopup() {
+    playerListPopup.style.display = 'block';
+    overlay.style.display = 'block';
+}
+
+function hidePopup() {
+    playerListPopup.style.display = 'none';
+    overlay.style.display = 'none';
+}
+
+// แสดงป๊อบอัพเมื่อกดปุ่ม
+startGameButton.addEventListener('click', () => {
+    showPopup();
+});
+
+// ซ่อนป๊อบอัพเมื่อกดที่ overlay
+overlay.addEventListener('click', () => {
+    hidePopup();
+});
+
+                // สร้างดาวตกใหม่
+                function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.classList.add('meteor');
+            document.body.appendChild(meteor);
+
+            meteor.style.left = `${Math.random() * 100}vw`;
+            meteor.style.animationDuration = `${Math.random() * 5 + 5}s`;
+
+            meteor.style.width = `${Math.random() * 3 + 4}px`;
+            meteor.style.height = `${Math.random() * 3 + 4}px`;
+            meteor.style.opacity = Math.random() * 0.5 + 0.5;
+
+            setTimeout(() => {
+                meteor.remove();
+            }, (Math.random() * 5 + 5) * 1000);
+        }
+
+        setInterval(createMeteor, 500);
+
+    </script>
+</body>
+</html>
