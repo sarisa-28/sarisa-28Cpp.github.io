@@ -168,7 +168,7 @@
     </div>
     
     <script>
-    const API_BASE_URL = "http://localhost:3000";
+    const API_BASE_URL = "http://localhost:10000";
 
     
     async function handleLogin() {
@@ -225,7 +225,7 @@ async function handleRegister() {
     }
 
     try {
-        const response = await fetch(`http://localhost:3000/register`, {
+        const response = await fetch(`http://localhost:10000/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

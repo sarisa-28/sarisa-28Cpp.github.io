@@ -113,7 +113,7 @@ const gameHistorySchema = new mongoose.Schema({
 const GameHistory = mongoose.model('GameHistory', gameHistorySchema);
 
 const corsOptions = {
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:3000',
+    origin: process.env.CLIENT_ORIGIN || 'http://localhost:10000',
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
 };
