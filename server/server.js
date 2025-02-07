@@ -713,7 +713,9 @@ app.post('/add-game-history', async (req, res) => {
 });
 
 // เริ่มเซิร์ฟเวอร์
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+const hostname = 'localhost'; // หรือ 127.0.0.1
+const port = 10000; // ตรวจสอบว่าพอร์ตเป็นตัวเลข
+server.listen(port, hostname, () => {
+    console.log(`Server running at http://${hostname}:${port}/`);
 });
+
