@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 app.use(express.static('public'));
 
 // เชื่อมต่อ MongoDB
-mongoose.connect('mongodb+srv://sarisat:cpp1234@cluster0.ezcgx.mongodb.net/', {
+mongoose.connect('mongodb+srv://sarisat:cpp1234@cluster0.ezcgx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
     useNewUrlParser: true,
     useUnifiedTopology: true
 }).then(() => {
@@ -713,8 +713,9 @@ app.post('/add-game-history', async (req, res) => {
 });
 
 // เริ่มเซิร์ฟเวอร์
-app.listen(10000, 'localhost', () => {
-    console.log('Server is running on http://localhost:10000');
-  });
-  
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server is running on http://localhost:${PORT}`);
+});
+
 
