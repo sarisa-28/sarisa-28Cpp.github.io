@@ -150,6 +150,35 @@ app.use(cors());
 // ใช้ JSON middleware
 app.use(express.json());
 
+// Serve HTML Files
+app.get("/", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/index.html"));
+});
+app.get("/addquestion", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/addquestion.html"));
+});
+app.get("/history", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/history.html"));
+});
+app.get("/play", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/play.html"));
+});
+app.get("/roomcode", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/roomcode.html"));
+});
+app.get("/scores", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/scores.html"));
+});
+app.get("/seeroom", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/seeroom.html"));
+});
+app.get("/setting", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/setting.html"));
+});
+app.get("/start", (req, res) => {
+    res.sendFile(path.join(__dirname, "../public/start.html"));
+});
+
 // เส้นทางสำหรับการล็อกอิน
 app.post('/login', async (req, res) => {
     const { username, password, type } = req.body;
