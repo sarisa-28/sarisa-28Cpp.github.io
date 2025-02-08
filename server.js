@@ -113,7 +113,7 @@ const gameHistorySchema = new mongoose.Schema({
 const GameHistory = mongoose.model('GameHistory', gameHistorySchema);
 
 const corsOptions = {
-    origin: 'http://localhost:3000', // หรือ URL ที่คุณใช้
+    origin: 'https://sarisa-28pcpp-github-io.onrender.com', // หรือ URL ที่คุณใช้
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
 };
