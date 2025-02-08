@@ -167,16 +167,16 @@ app.get("/roomcode.html", (req, res) => {
 app.get("/seeroom.html", (req, res) => {
     res.sendFile(path.join(__dirname, ".../public/seeroom.html"));
 });
-app.get("/settingv", (req, res) => {
+app.get("/setting.html", (req, res) => {
     res.sendFile(path.join(__dirname, ".../public/setting.html"));
 });
 app.get("/start.html", (req, res) => {
     res.sendFile(path.join(__dirname, ".../public/start.html"));
 });
-
 app.get("/scores.html", (req, res) => {
     res.sendFile(path.join(__dirname, ".../public/scores.html"));
 });
+
 
 // เส้นทางสำหรับการล็อกอิน
 app.post('/login', async (req, res) => {
