@@ -62,7 +62,7 @@ const PlayerScore = mongoose.model('PlayerScore', scoreSchema);
 const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    email: { type: String, required: true }, // ฟิลด์ใหม่
+    email: { type: String, required: true, unique: true },
     type: { type: String, enum: ['Admin', 'Player'], required: true }
 });
 
