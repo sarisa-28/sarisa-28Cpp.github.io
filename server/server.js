@@ -113,7 +113,7 @@ const gameHistorySchema = new mongoose.Schema({
 const GameHistory = mongoose.model('GameHistory', gameHistorySchema);
 
 const corsOptions = {
-    origin: process.env.CLIENT_ORIGIN || 'http://localhost:10000',
+    origin: 'http://localhost:3000', // หรือ URL ที่คุณใช้
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
 };
@@ -149,39 +149,6 @@ app.use(cors(corsOptions));
 app.use(cors());
 // ใช้ JSON middleware
 app.use(express.json());
-
-// Serve static files from the "public" directory
-app.use(express.static(path.join(__dirname, "../public")));
-
-// Route for "/"
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/index.html"));
-});
-app.get("/addquestion", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/addquestion.html"));
-});
-app.get("/history", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/history.html"));
-});
-app.get("/play", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/play.html"));
-});
-app.get("/roomcode", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/roomcode.html"));
-});
-app.get("/scores", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/scores.html"));
-});
-app.get("/seeroom", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/seeroom.html"));
-});
-app.get("/setting", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/setting.html"));
-});
-app.get("/start", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/start.html"));
-});
-
 
 // เส้นทางสำหรับการล็อกอิน
 app.post('/login', async (req, res) => {
@@ -713,9 +680,7 @@ app.post('/add-game-history', async (req, res) => {
 });
 
 // เริ่มเซิร์ฟเวอร์
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Server is running on http://localhost:${PORT}`);
+const PORT = process.env.PORT || 3000;
+server.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
-
-
