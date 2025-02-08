@@ -18,7 +18,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'root')));
+app.use(express.static(path.join(__dirname, 'public')));
 
 // เชื่อมต่อ MongoDB
 mongoose.connect('mongodb+srv://sarisat:cpp1234@cluster0.ezcgx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
@@ -150,31 +150,32 @@ app.use(cors());
 
 // Serve HTML Files
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "index.html"));
+    res.sendFile(path.join(__dirname, ".../public/index.html"));
 });
 app.get("/addquestion.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "addquestion.html"));
+    res.sendFile(path.join(__dirname, ".../public/addquestion.html"));
 });
 app.get("/history.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "history.html"));
+    res.sendFile(path.join(__dirname, ".../public/history.html"));
 });
 app.get("/play.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "play.html"));
+    res.sendFile(path.join(__dirname, ".../public/play.html"));
 });
 app.get("/roomcode.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "roomcode.html"));
-});
-app.get("/scores.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "scores.html"));
+    res.sendFile(path.join(__dirname, ".../public/roomcode.html"));
 });
 app.get("/seeroom.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "seeroom.html"));
+    res.sendFile(path.join(__dirname, ".../public/seeroom.html"));
 });
 app.get("/settingv", (req, res) => {
-    res.sendFile(path.join(__dirname, "setting.html"));
+    res.sendFile(path.join(__dirname, ".../public/setting.html"));
 });
 app.get("/start.html", (req, res) => {
-    res.sendFile(path.join(__dirname, "start.html"));
+    res.sendFile(path.join(__dirname, ".../public/start.html"));
+});
+
+app.get("/scores.html", (req, res) => {
+    res.sendFile(path.join(__dirname, ".../public/scores.html"));
 });
 
 // เส้นทางสำหรับการล็อกอิน
