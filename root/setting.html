@@ -247,7 +247,6 @@
 
       <!-- ปุ่ม Reset Password -->
       <button type="button" class="btn" onclick="handlePasswordReset()">Reset Password</button>
-    <a href="#" class="link" onclick="showLoginForm()">Back to Login</a>
 </div>
 
     <script>
@@ -289,7 +288,6 @@
 
         if (response.ok) {
             alert('Password reset successful!');
-            showLoginForm();
         } else {
             const errorText = await response.text();
             alert(`Failed to reset password: ${errorText}`);
@@ -330,10 +328,6 @@ async function sendOTP() {
         alert('An error occurred while sending OTP. Please try again.');
     }
 }
-
-        function showLoginForm() {
-            window.location.href = "play.html"; // เปลี่ยนไปที่หน้า Login
-        }
 
 //แบ่งแยกเมนูระหว่าง Admin และ Player
 var loginType = localStorage.getItem("loginType"); // ดึงค่าจาก localStorage

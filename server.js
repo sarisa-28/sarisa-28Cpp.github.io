@@ -18,7 +18,7 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 app.use(bodyParser.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, 'root')));
 
 // เชื่อมต่อ MongoDB
 mongoose.connect('mongodb+srv://sarisat:cpp1234@cluster0.ezcgx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
@@ -149,34 +149,30 @@ app.use(cors(corsOptions));
 app.use(cors());
 // ใช้ JSON middleware
 app.use(express.json());
-
 // Serve HTML Files
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/index.html"));
+    res.sendFile(path.join(__dirname, "../root/index.html"));
 });
 app.get("/addquestion", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/addquestion.html"));
+    res.sendFile(path.join(__dirname, "../root/addquestion.html"));
 });
 app.get("/history", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/history.html"));
+    res.sendFile(path.join(__dirname, "../root/history.html"));
 });
 app.get("/play", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/play.html"));
+    res.sendFile(path.join(__dirname, "../root/play.html"));
 });
 app.get("/roomcode", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/roomcode.html"));
-});
-app.get("/scores", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/scores.html"));
+    res.sendFile(path.join(__dirname, "../root/roomcode.html"));
 });
 app.get("/seeroom", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/seeroom.html"));
+    res.sendFile(path.join(__dirname, "../root/seeroom.html"));
 });
 app.get("/setting", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/setting.html"));
+    res.sendFile(path.join(__dirname, "../root/setting.html"));
 });
 app.get("/start", (req, res) => {
-    res.sendFile(path.join(__dirname, "../public/start.html"));
+    res.sendFile(path.join(__dirname, "../root/start.html"));
 });
 
 // เส้นทางสำหรับการล็อกอิน
