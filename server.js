@@ -147,32 +147,34 @@ function sendOTP(email, otp) {
 app.use(cors(corsOptions));
 
 app.use(cors());
-// ใช้ JSON middleware
-app.use(express.json());
+
 // Serve HTML Files
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../root/index.html"));
+    res.sendFile(path.join(__dirname, "index.html"));
 });
-app.get("/addquestion", (req, res) => {
-    res.sendFile(path.join(__dirname, "../root/addquestion.html"));
+app.get("/addquestion.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "addquestion.html"));
 });
-app.get("/history", (req, res) => {
-    res.sendFile(path.join(__dirname, "../root/history.html"));
+app.get("/history.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "history.html"));
 });
-app.get("/play", (req, res) => {
-    res.sendFile(path.join(__dirname, "../root/play.html"));
+app.get("/play.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "play.html"));
 });
-app.get("/roomcode", (req, res) => {
-    res.sendFile(path.join(__dirname, "../root/roomcode.html"));
+app.get("/roomcode.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "roomcode.html"));
 });
-app.get("/seeroom", (req, res) => {
-    res.sendFile(path.join(__dirname, "../root/seeroom.html"));
+app.get("/scores.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "scores.html"));
 });
-app.get("/setting", (req, res) => {
-    res.sendFile(path.join(__dirname, "../root/setting.html"));
+app.get("/seeroom.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "seeroom.html"));
 });
-app.get("/start", (req, res) => {
-    res.sendFile(path.join(__dirname, "../root/start.html"));
+app.get("/settingv", (req, res) => {
+    res.sendFile(path.join(__dirname, "setting.html"));
+});
+app.get("/start.html", (req, res) => {
+    res.sendFile(path.join(__dirname, "start.html"));
 });
 
 // เส้นทางสำหรับการล็อกอิน
