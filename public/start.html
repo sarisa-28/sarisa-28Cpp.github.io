@@ -123,6 +123,58 @@
             box-shadow: 0 0 15px pink;
         }
 
+                        /* ป๊อบอัพ2 */
+                        #player-list-popup2 {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 40, 0.9);
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px cyan;
+            z-index: 1000;
+        }
+
+        #player-list-popup2 h3 {
+            font-size: 24px;
+            color: cyan;
+            text-shadow: 0 0 10px cyan;
+        }
+
+        #player-list-popup2 ul {
+            list-style-type: none;
+            padding: 0;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        #player-list-popup2 ul li {
+            background: rgba(255, 255, 255, 0.2);
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+
+        /* ปุ่มend-gameในป๊อบอัพ */
+        #end-game {
+            background: linear-gradient(45deg, #ff0099, #ff6600);
+            border: none;
+            color: white;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        #end-game:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 15px pink;
+        }
+
         /* การเคลื่อนไหวดาวตกที่ช้าและมีเอฟเฟ็กต์ */
 @keyframes meteor-shower {
     0% {
@@ -257,12 +309,21 @@ h1 {
         <button id="start-game-in-popup">Start Game</button>
     </div>
 
+        <!-- เพิ่ม popup ใหม่สำหรับแสดงคะแนน -->
+<div id="player-list-popup2" style="display: none;">
+    <h3>Game Over - Player Scores</h3>
+    <ul id="player-score-list"></ul>
+    <button id="end-game">End Game</button>
+</div>
+
+
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
         const socket = io('https://sarisa-28pcpp-github-io.onrender.com');  // URL ของเซิร์ฟเวอร์
         const roomCodeInput = document.getElementById('room-code');
         const playerListPopup = document.getElementById('player-list-popup');
+        const playerListPopup2 = document.getElementById('player-list-popup2');
         const playerList = document.getElementById('player-list');
         const totalPlayersDisplay = document.getElementById('total-players');
         const roomCodeDisplay = document.getElementById('room-code-display');
@@ -276,6 +337,7 @@ h1 {
     }
 
         let currentRoomCode = '';
+        let playerScoreList = [];
 
         startGameButton.addEventListener('click', async () => {
             const roomCode = roomCodeInput.value;
@@ -320,9 +382,44 @@ h1 {
         startGameInPopupButton.addEventListener('click', async () => {
             const startResponse = await fetch(`/start-game/${currentRoomCode}`, { method: 'POST' });
             if (startResponse.ok) {
+                playerListPopup.style.display = 'none';
+                playerListPopup2.style.display = 'block';
                 alert('Game has started! All players are now ready.');
             }
         });
+
+// ฟังสัญญาณคะแนนจากเซิร์ฟเวอร์
+document.addEventListener("DOMContentLoaded", function () {
+    const playerScoreList = document.getElementById('player-score-list'); // ต้องเป็น <ul> หรือ <ol>
+
+    if (!playerScoreList) {
+        console.error("Error: Element with ID 'player-score-list' not found in the DOM.");
+        return;
+    }
+
+    // ฟังสัญญาณคะแนนจากเซิร์ฟเวอร์
+    socket.on('update-player-scores', (players) => {
+        playerScoreList.innerHTML = ''; // ล้างรายการเก่า
+
+        players.forEach(player => {
+            const li = document.createElement('li');
+            li.textContent = `${player.name}: ${player.score} points`;
+            playerScoreList.appendChild(li); // ✅ แก้ปัญหาที่เคยเกิด
+        });
+    });
+
+    // เมื่อกดปุ่ม End Game
+    const endGameButton = document.getElementById('end-game');
+    if (endGameButton) {
+        endGameButton.addEventListener('click', () => {
+            socket.emit('end-game');
+            alert('Game has ended!');
+            window.location.href = "scores.html"; // กลับไปหน้าแสดงคะแนน
+        });
+    } else {
+        console.error("Error: End Game button not found in the DOM.");
+    }
+});
 
         startGameButton.addEventListener('click', () => {
     if (roomCodeInput.value.trim() !== '') {

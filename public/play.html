@@ -510,7 +510,7 @@ let timeLeft = 0;
 let playerName = '';
 let score = 0;
 let roomCode = '';
-    
+let playerScore = 0;    
 
     // ดึงชื่อผู้ใช้จาก sessionStorage หรือ localStorage ถ้ามี
     const username = sessionStorage.getItem('username'); // หรือใช้ localStorage.getItem('username');
@@ -921,6 +921,12 @@ const uniqueIdentifier = `${username}-${new Date().getTime()}`; // กำหน�
 
 savePlayerScore(playerName, score, username, roomCode, datePlayed, uniqueIdentifier);
 showRocketAndScore(score);
+socket.emit('player-score', {
+            name: playerName,
+            roomCode: roomCode,
+            score: score
+        });
+        alert(`Game Over! Your Score: ${score}`);
 resetQuiz();
 }
 

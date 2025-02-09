@@ -539,6 +539,7 @@ app.post('/start-game/:roomCode', async (req, res) => {
 // เมื่อผู้เล่นเข้าร่วม RoomCode
 let roomPlayers = {};  // เก็บข้อมูลผู้เล่นที่เชื่อมต่อในแต่ละห้อง
 let roomAdmins = {};   // เก็บ admin ของแต่ละห้อง
+let playerScores = {};
 
 io.on('connection', (socket) => {
     console.log('A player connected');
@@ -610,6 +611,18 @@ io.on('connection', (socket) => {
             console.log(`Admin closed the popup in room ${roomCode}`);
             delete roomAdmins[roomCode];
         }
+    });
+    socket.on('player-score', ({ name, roomCode, score }) => {
+        if (!playerScores[roomCode]) {
+            playerScores[roomCode] = [];
+        }
+        playerScores[roomCode].push({ name, score });
+
+        io.to(roomCode).emit('update-player-scores', playerScores[roomCode]);
+    });
+
+    socket.on('end-game', () => {
+        playerScores = {}; // รีเซ็ตคะแนนเมื่อจบเกม
     });
 });
 
