@@ -396,17 +396,33 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Error: Element with ID 'player-score-list' not found in the DOM.");
         return;
     }
-
-    // ฟังสัญญาณคะแนนจากเซิร์ฟเวอร์
+    // ฟังสัญญาณอัพเดทคะแนนจากเซิร์ฟเวอร์
     socket.on('update-player-scores', (players) => {
         playerScoreList.innerHTML = ''; // ล้างรายการเก่า
+        playerScoreList.innerHTML = ''; // เคลียร์รายการก่อน
 
-        players.forEach(player => {
-            const li = document.createElement('li');
-            li.textContent = `${player.name}: ${player.score} points`;
-            playerScoreList.appendChild(li); // ✅ แก้ปัญหาที่เคยเกิด
-        });
+    // เรียงคะแนนจากมากไปน้อย
+        players.sort((a, b) => b.score - a.score);
+
+        let currentRank = 1; // เริ่มต้นอันดับที่ 1
+        let previousScore = null;
+        let rankOffset = 0; // ใช้เลื่อนอันดับเมื่อคะแนนเท่ากัน
+
+        players.forEach((player, index) => {
+        // ถ้าคะแนนเปลี่ยนแปลงจากผู้เล่นก่อนหน้า ให้เพิ่มอันดับ
+            if (player.score !== previousScore) {
+                currentRank += rankOffset;
+                rankOffset = 1; // รีเซ็ต rankOffset
+            } else {
+                rankOffset++; // ถ้าคะแนนเท่ากัน ใช้อันดับเดิม
+            }
+                previousScore = player.score;
+
+        const li = document.createElement('li');
+        li.textContent = `🏆 Rank ${currentRank}: ${player.name} - ${player.score} points`;
+        playerScoreList.appendChild(li);
     });
+});
 
     // เมื่อกดปุ่ม End Game
     const endGameButton = document.getElementById('end-game');
