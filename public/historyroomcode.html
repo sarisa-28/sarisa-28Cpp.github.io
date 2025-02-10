@@ -1,0 +1,304 @@
+<!--public/historyroomcode.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History Room Code</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+                /* การเคลื่อนไหวดาวตกที่ช้าและมีเอฟเฟ็กต์ */
+@keyframes meteor-shower {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+    }
+    50% {
+        transform: translateY(50vh) rotate(180deg);
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);  /* หมุนและตกไปที่ล่าง */
+    }
+}
+.meteor {
+    position: absolute;
+    top: -10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: meteor-shower 5s linear infinite;
+}
+
+        body {
+            font-family: 'Orbitron', sans-serif;
+            background: url('https://spaceth.co/wp-content/uploads/2019/03/dnb_land_ocean_ice.2012.3600x1800-1024x512.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+            text-align: center;
+        }
+        .container {
+            margin: 50px auto;
+            width: 80%;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .history-box {  
+    width: 120px;
+    height: 140px;
+    background: rgba(0, 0, 50, 0.9);
+    padding: 20px;
+    border-radius: 50% 50% 40% 40%; /* ทำให้ดูเป็นหัวจรวด */
+    text-align: center;
+    cursor: pointer;
+    box-shadow: 0 0 15px cyan;
+    position: relative;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ปีกจรวด */
+.history-box::before, .history-box::after {
+    content: "";
+    position: absolute;
+    width: 40px;
+    height: 50px;
+    background: red;
+    border-radius: 50%;
+    bottom: -10px;
+}
+
+.history-box::before {
+    left: -30px;
+    transform: rotate(-20deg);
+}
+
+.history-box::after {
+    right: -30px;
+    transform: rotate(20deg);
+}
+
+/* 🔥 ทำไฟท้ายจรวดโดยใช้ another ::after */
+.history-box::after {
+    content: "";
+    position: absolute;
+    width: 25px;
+    height: 60px;
+    background: linear-gradient(to bottom, orange, red);
+    bottom: -60px; /* ให้ไฟอยู่ต่ำกว่าตัวจรวด */
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    opacity: 1; /* แสดงไฟตลอดเวลา */
+    animation: fire 0.3s infinite alternate;
+}
+
+/* อนิเมชันไฟท้าย */
+@keyframes fire {
+    0% { height: 50px; width: 50px; opacity: 1; }
+    100% { height: 70px; opacity: 0.8; }
+}
+/* อนิเมชันตอน hover */
+.history-box:hover {
+    transform: translateY(-20px);
+    box-shadow: 0 0 25px cyan, 0 0 40px rgba(0, 255, 255, 0.5);
+}
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 40, 0.9);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 25px cyan;
+            z-index: 1000;
+            width: 50%;
+            text-align: center;
+            font-size: 20px;
+            color: #ffffff;
+        }
+        .modal h2 {
+            color: cyan;
+            text-shadow: 0 0 10px cyan;
+            font-size: 40px;
+        }
+        .modal ul {
+            list-style: none;
+            padding: 0;
+        }
+        .modal ul li {
+            margin: 10px 0;
+            background: rgba(255, 255, 255, 0.3);
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 18px;
+            box-shadow: 0 0 10px white;
+        }
+        .close-btn {
+            background: red;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 15px;
+            font-size: 16px;
+            box-shadow: 0 0 10px red;
+        }
+        .close-btn:hover {
+    background: darkred;
+    border-color: darkred;
+    transform: scale(1.05); /* เพิ่มเอฟเฟกต์ขยายเล็กน้อย */
+}
+
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+        }
+
+        /* แถบเมนูข้างบน */
+        #top-menu {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: gradient-animation 6s ease infinite;
+            border-bottom: 5px solid cyan;
+            box-shadow: 0 0 20px cyan;
+        }
+
+        #top-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 0 15px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #top-menu a:hover {
+            background-color: #ff6f61;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px cyan;
+        }
+
+        @keyframes gradient-animation {
+    0%, 100% {
+        background: linear-gradient(45deg, #0f2027, #203a43, #2c5364); /* เขียวเข้มไปน้ำเงิน */
+    }
+    50% {
+        background: linear-gradient(45deg, #232526, #414345, #485563); /* ดำเข้มไปน้ำเงิน */
+    }
+}
+/* ปรับแต่งหัวข้อ */
+h1 {
+            color:darkorange;
+            text-shadow: 0 0 10px cyan, 0 0 20px blue;
+            font-size: 40px;
+            margin-top: 50px;
+        }
+
+    </style>
+</head>
+<body>
+        <!-- แถบเมนูข้างบน -->
+        <div id="top-menu">
+            <a href="start.html"><i class="fa-solid fas fa-play fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Start</a>
+            <a href="addquestion.html">🤔Add Questions💭</a>
+            <a href="roomcode.html"><i class="fas fa-key fa-solid fa-flip"  style="--fa-animation-duration: 3s; color: cyan;"></i> Set Room Code</a>  
+            <a href="seeroom.html">🚩View Room Codes👀</a> 
+            <a href="scores.html"><i class="fas fa-trophy fa-beat" style="color: cyan;"></i> View Scores</a>
+            <a href="historyroomcode.html">👑History RoomCode🏰</a>
+            <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+            <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
+        </div>
+        
+        <div id="overlay"></div>
+        <h1>🫅 History of Room Codes 👸</h1>
+        <div class="container" id="history-container"></div>
+        <div id="history-modal" class="modal">
+            <h2>🎖️History of playing room codes🔥</h2>
+            <p><strong>Room Code:</strong> <span id="modal-room-code"></span></p>
+            <p><strong>Date Played:</strong> <span id="modal-date"></span></p>
+            <ul id="modal-players"></ul>
+            <button class="close-btn" onclick="closeModal()">Close</button>
+        </div>
+        
+        <script>
+            async function fetchHistory() {
+                try {
+                    const response = await fetch('/api/historyroomcode');
+                    const historyData = await response.json();
+                    const container = document.getElementById('history-container');
+                    container.innerHTML = '';
+                    historyData.forEach(history => {
+                        const box = document.createElement('div');
+                        box.classList.add('history-box');
+                        const colors = [
+            '#FF6347', '#32CD32', '#1E90FF', '#FFD700', '#FF69B4', 
+            '#8A2BE2', '#00FA9A', '#D2691E', '#DC143C', '#20B2AA'
+        ];
+                        box.style.background = colors[Math.floor(Math.random() * colors.length)];
+                        box.innerHTML = `<h3>Room ${history.roomCode}</h3><p>${new Date(history.datePlayed).toLocaleString()}</p>`;
+                        box.onclick = () => openModal(history);
+                        container.appendChild(box);
+                    });
+                } catch (error) {
+                    console.error('Error fetching history:', error);
+                }
+            }
+            function openModal(history) {
+                document.getElementById('overlay').style.display = 'block';
+                document.getElementById('modal-room-code').innerText = history.roomCode;
+                document.getElementById('modal-date').innerText = new Date(history.datePlayed).toLocaleString();
+                const playersList = document.getElementById('modal-players');
+                playersList.innerHTML = '';
+                history.players.forEach(player => {
+                    const li = document.createElement('li');
+                    li.innerText = `Rank ${player.rank}: ${player.name} - ${player.score} points`;
+                    playersList.appendChild(li);
+                });
+                document.getElementById('history-modal').style.display = 'block';
+            }
+            function closeModal() {
+                document.getElementById('overlay').style.display = 'none';
+                document.getElementById('history-modal').style.display = 'none';
+            }
+            window.onload = fetchHistory;
+
+                                    // สร้างดาวตกใหม่
+                                    function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.classList.add('meteor');
+            document.body.appendChild(meteor);
+
+            meteor.style.left = `${Math.random() * 100}vw`;
+            meteor.style.animationDuration = `${Math.random() * 5 + 5}s`;
+
+            meteor.style.width = `${Math.random() * 3 + 4}px`;
+            meteor.style.height = `${Math.random() * 3 + 4}px`;
+            meteor.style.opacity = Math.random() * 0.5 + 0.5;
+
+            setTimeout(() => {
+                meteor.remove();
+            }, (Math.random() * 5 + 5) * 1000);
+        }
+
+        setInterval(createMeteor, 500);
+        </script>
+    </body>
+    </html>

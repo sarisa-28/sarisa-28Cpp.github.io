@@ -279,6 +279,7 @@ h1 {
             <a href="roomcode.html"><i class="fas fa-key fa-solid fa-flip"  style="--fa-animation-duration: 3s; color: cyan;"></i> Set Room Code</a>  
             <a href="seeroom.html">🚩View Room Codes👀</a> 
             <a href="scores.html"><i class="fas fa-trophy fa-beat" style="color: cyan;"></i> View Scores</a>
+            <a href="historyroomcode.html">👑History RoomCode🏰</a>
             <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
             <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
         </div>
@@ -320,7 +321,7 @@ h1 {
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
-        const socket = io('https://sarisa-28pcpp-github-io.onrender.com');  // URL ของเซิร์ฟเวอร์
+        const socket = io();
         const roomCodeInput = document.getElementById('room-code');
         const playerListPopup = document.getElementById('player-list-popup');
         const playerListPopup2 = document.getElementById('player-list-popup2');
@@ -396,12 +397,12 @@ document.addEventListener("DOMContentLoaded", function () {
         console.error("Error: Element with ID 'player-score-list' not found in the DOM.");
         return;
     }
+
     // ฟังสัญญาณอัพเดทคะแนนจากเซิร์ฟเวอร์
     socket.on('update-player-scores', (players) => {
         playerScoreList.innerHTML = ''; // ล้างรายการเก่า
-        playerScoreList.innerHTML = ''; // เคลียร์รายการก่อน
 
-    // เรียงคะแนนจากมากไปน้อย
+        // เรียงคะแนนจากมากไปน้อย
         players.sort((a, b) => b.score - a.score);
 
         let currentRank = 1; // เริ่มต้นอันดับที่ 1
@@ -409,31 +410,99 @@ document.addEventListener("DOMContentLoaded", function () {
         let rankOffset = 0; // ใช้เลื่อนอันดับเมื่อคะแนนเท่ากัน
 
         players.forEach((player, index) => {
-        // ถ้าคะแนนเปลี่ยนแปลงจากผู้เล่นก่อนหน้า ให้เพิ่มอันดับ
+            // ถ้าคะแนนเปลี่ยนแปลงจากผู้เล่นก่อนหน้า ให้เพิ่มอันดับ
             if (player.score !== previousScore) {
                 currentRank += rankOffset;
                 rankOffset = 1; // รีเซ็ต rankOffset
             } else {
                 rankOffset++; // ถ้าคะแนนเท่ากัน ใช้อันดับเดิม
             }
-                previousScore = player.score;
+            previousScore = player.score;
 
-        const li = document.createElement('li');
-        li.textContent = `🏆 Rank ${currentRank}: ${player.name} - ${player.score} points`;
-        playerScoreList.appendChild(li);
+            const li = document.createElement('li');
+            li.textContent = `🏆 Rank ${currentRank}: ${player.name} - ${player.score} points`;
+            playerScoreList.appendChild(li);
+        });
+            // ดึงข้อมูลคะแนนเฉพาะรอบปัจจุบันจากเซิร์ฟเวอร์
+    async function fetchCurrentScores() {
+        try {
+            const response = await fetch(`/get-current-scores/${roomCode}`);
+            const data = await response.json();
+            updatePlayerScores(data.players);
+        } catch (error) {
+            console.error("Error fetching current scores:", error);
+        }
+    }
     });
 });
 
-    // เมื่อกดปุ่ม End Game
-    const endGameButton = document.getElementById('end-game');
-    if (endGameButton) {
-        endGameButton.addEventListener('click', () => {
-            socket.emit('end-game');
-            alert('Game has ended!');
-            window.location.href = "scores.html"; // กลับไปหน้าแสดงคะแนน
+// เมื่อกดปุ่ม End Game
+document.getElementById('end-game').addEventListener('click', async () => {
+    const roomCode = document.getElementById('room-code').value;
+    const playerScoreList = document.getElementById('player-score-list');
+    
+    if (!roomCode) {
+        alert("Room code not found.");
+        return;
+    }
+
+    const scores = [];
+    let currentRank = 1;
+    let previousScore = null;
+    let rankOffset = 0;
+
+    // ดีบัก: ตรวจสอบว่า li มีข้อมูลไหม
+    console.log("playerScoreList.querySelectorAll('li').length:", playerScoreList.querySelectorAll('li').length);
+
+    playerScoreList.querySelectorAll('li').forEach(li => {
+        // ดีบัก: ดูข้อมูลในแต่ละ li
+        console.log("li.textContent:", li.textContent);
+
+        const match = li.textContent.match(/🏆 Rank (\d+): (.+) - (\d+) points/);
+        if (match) {
+            const rank = parseInt(match[1]);
+            const name = match[2];
+            const score = parseInt(match[3]);
+
+            // ตรวจสอบลำดับถัดไป
+            if (score !== previousScore) {
+                currentRank += rankOffset;
+                rankOffset = 1;
+            } else {
+                rankOffset++;
+            }
+            previousScore = score;
+
+            scores.push({ rank: currentRank, name, score });
+        }
+    });
+
+    // ดีบัก: ดูว่า scores มีข้อมูลหรือไม่
+    console.log("scores:", scores);
+
+    if (scores.length === 0) {
+        alert("No scores to save.");
+        return;
+    }
+
+    // เพิ่มวันที่และเวลาในรูปแบบ ISO
+    const datePlayed = new Date().toISOString();
+
+    try {
+        const response = await fetch('/save-history', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ roomCode, scores, datePlayed })
         });
-    } else {
-        console.error("Error: End Game button not found in the DOM.");
+
+        if (response.ok) {
+            alert("Game history saved successfully!"); 
+            window.location.href = "scores.html"; 
+        } else {
+            alert("Error saving game history.");
+        }
+    } catch (error) {
+        console.error("Error:", error);
     }
 });
 

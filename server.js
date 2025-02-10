@@ -118,6 +118,21 @@ const corsOptions = {
     allowedHeaders: ['Content-Type'],
 };
 
+const historySchema = new mongoose.Schema({
+    roomCode: String,
+    players: [
+        {
+            rank: Number,  
+            name: String,
+            score: Number
+        }
+    ],
+    datePlayed: { type: Date, default: Date.now }  // บันทึกวันเวลา
+});
+
+const HistoryRoomCode = mongoose.model('HistoryRoomCode', historySchema);
+
+
 // สร้าง transporter สำหรับส่ง email
 const transporter = nodemailer.createTransport({
     service: 'gmail',
@@ -176,7 +191,9 @@ app.get("/start.html", (req, res) => {
 app.get("/scores.html", (req, res) => {
     res.sendFile(path.join(__dirname, ".../public/scores.html"));
 });
-
+app.get("/historyroomcode.html", (req, res) => {
+    res.sendFile(path.join(__dirname, ".../public/historyroomcode.html"));
+});
 
 // เส้นทางสำหรับการล็อกอิน
 app.post('/login', async (req, res) => {
@@ -624,6 +641,26 @@ io.on('connection', (socket) => {
     socket.on('end-game', () => {
         playerScores = {}; // รีเซ็ตคะแนนเมื่อจบเกม
     });
+    socket.on('update-player-scores', async ({ roomCode, players }) => {
+        try {
+            // ลบคะแนนของรอบที่แล้วออกไปก่อน
+            await HistoryRoomCode.deleteMany({ roomCode });
+
+            // บันทึกคะแนนรอบใหม่
+            const newHistory = new HistoryRoomCode({
+                roomCode,
+                players,
+                datePlayed: new Date()
+            });
+
+            await newHistory.save();
+            
+            // ส่งคะแนนอัปเดตไปยังทุกไคลเอนต์ในห้องนี้
+            io.to(roomCode).emit('update-player-scores', players);
+        } catch (err) {
+            console.error("Error updating scores:", err);
+        }
+    });
 });
 
 // การตรวจสอบใน server
@@ -717,6 +754,98 @@ app.post('/add-game-history', async (req, res) => {
         res.status(200).json({ message: 'Game history saved' });
     } catch (error) {
         res.status(500).json({ message: 'Error saving game history' });
+    }
+});
+app.post('/save-history', async (req, res) => {
+    const { roomCode, scores, datePlayed } = req.body;
+
+    if (!roomCode || !scores || scores.length === 0 || !datePlayed) {
+        return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    try {
+        const thailandDate = moment.tz(datePlayed, 'Asia/Bangkok').toDate();  // ปรับเป็นเวลาไทย
+
+        const newHistory = new HistoryRoomCode({ 
+            roomCode, 
+            players: scores, 
+            datePlayed: thailandDate 
+        });
+
+        await newHistory.save();
+        res.status(200).json({ message: "Game history saved successfully" });
+    } catch (err) {
+        console.error("Error saving history:", err);
+        res.status(500).json({ error: "Error saving history" });
+    }
+});
+
+// API ดึงข้อมูลคะแนนปัจจุบันของห้อง
+app.get('/get-current-scores/:roomCode', async (req, res) => {
+    const { roomCode } = req.params;
+
+    try {
+        const latestHistory = await HistoryRoomCode.findOne({ roomCode })
+            .sort({ datePlayed: -1 }) // ดึงข้อมูลล่าสุด
+            .limit(1);
+
+        if (!latestHistory) {
+            return res.json({ players: [] }); // ถ้าไม่มีข้อมูล ให้คืนค่าเป็นอาร์เรย์ว่าง
+        }
+
+        res.json({ players: latestHistory.players });
+    } catch (err) {
+        console.error("Error fetching scores:", err);
+        res.status(500).json({ error: "Error fetching scores" });
+    }
+});
+
+// API สำหรับดึงประวัติห้องเกมทั้งหมด
+app.get('/api/historyroomcode', async (req, res) => {
+    try {
+        const history = await HistoryRoomCode.find().sort({ datePlayed: -1 }); // เรียงจากล่าสุดไปเก่าสุด
+        res.json(history);
+    } catch (error) {
+        console.error('Error fetching history:', error);
+        res.status(500).send('Error fetching history');
+    }
+});
+
+// API สำหรับบันทึกประวัติห้องเกม
+app.post('/api/historyroomcode', async (req, res) => {
+    const { roomCode, players } = req.body;
+
+    if (!roomCode || !players || !Array.isArray(players)) {
+        return res.status(400).json({ error: "Missing required fields or invalid data format." });
+    }
+
+    const newHistory = new HistoryRoomCode({
+        roomCode,
+        players,
+        datePlayed: new Date()
+    });
+
+    try {
+        await newHistory.save();
+        res.status(201).json({ message: "History saved successfully!" });
+    } catch (error) {
+        console.error('Error saving history:', error);
+        res.status(500).send('Error saving history');
+    }
+});
+
+// API สำหรับดึงประวัติของห้องที่ระบุด้วย Room Code
+app.get('/api/historyroomcode/:roomCode', async (req, res) => {
+    const { roomCode } = req.params;
+    try {
+        const history = await HistoryRoomCode.findOne({ roomCode });
+        if (!history) {
+            return res.status(404).json({ error: "No history found for this Room Code" });
+        }
+        res.json(history);
+    } catch (error) {
+        console.error('Error fetching history for room:', error);
+        res.status(500).send('Error fetching history for room');
     }
 });
 
