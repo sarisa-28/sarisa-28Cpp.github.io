@@ -77,10 +77,34 @@
         .link:hover {
             text-decoration: underline;
         }
+        /* QR Code ไว้มุมบนซ้าย */
+        .qr-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            text-align: center;
+        }
+        .qr-container h2 {
+            font-size: 18px;
+            color:darkorange;
+        }
+        .qr-container img {
+            width: 100px;
+            height: auto;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px cyan;
+        }
     </style>
 </head>
 <body>
-    
+        <!-- QR Code ไว้มุมบนซ้าย -->
+        <div class="qr-container">
+            <h2>👇🏼 แสกนQRcode 👇🏼</h2>
+            <img src="image/QRcode.png" alt="QR Code">
+            <h2>❤️‍🔥 เพื่อดูคู่มือการใช้งานเว็บไซต์ 📲</h2>
+        </div>
+        
     <div class="login-container">
         <h2>🌏 Login 🗾</h2>
         <form id="loginForm">
