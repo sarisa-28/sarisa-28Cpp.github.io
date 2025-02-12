@@ -1,4 +1,4 @@
-<!--history.html-->
+<!--public/history.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -140,6 +140,21 @@ h2 {
     position: relative;
 }
 
+@keyframes rotate360 {
+    from {
+        transform: scale(1.5) rotate(0deg);
+    }
+    to {
+        transform: scale(1.5) rotate(360deg);
+    }
+}
+
+/* เอฟเฟกต์เมื่อ hover */
+.puzzle-piece:hover {
+    animation: rotate360 5s linear infinite; /* หมุน 360 องศาช้าๆ และต่อเนื่อง */
+    box-shadow: 0 0 40px rgba(255, 165, 0, 1);
+}
+
 /* เอฟเฟกต์ลอยขึ้นลง */
 @keyframes float {
     from {
@@ -221,20 +236,6 @@ h2 {
     }
 }
 
-@keyframes rotate360 {
-    from {
-        transform: scale(1.5) rotate(0deg);
-    }
-    to {
-        transform: scale(1.5) rotate(360deg);
-    }
-}
-
-/* เอฟเฟกต์เมื่อ hover */
-.puzzle-piece:hover {
-    animation: rotate360 5s linear infinite; /* หมุน 360 องศาช้าๆ และต่อเนื่อง */
-    box-shadow: 0 0 40px rgba(255, 165, 0, 1);
-}
         /* Modal styling */
         .modal {
             display: none;
@@ -282,6 +283,7 @@ h2 {
         <a href="play.html"><i class="fa-solid fas fa-home fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Play Game</a>
         <a href="history.html"><i class="fas fa-history fa-beat" style="color: cyan;"></i> History</a>  
         <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+        <a href="evaluation.html"><i class="fa-solid fa-thumbs-up fa-flip" style="--fa-animation-duration: 3s; color: cyan;"></i> Evaluation</a>
         <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
     </div>
 

@@ -1,4 +1,4 @@
-<!--roomcocde.html-->
+<!--public/roomcocde.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -183,6 +183,7 @@ button.selected {
             <a href="scores.html"><i class="fas fa-trophy fa-beat" style="color: cyan;"></i> View Scores</a>
             <a href="historyroomcode.html">👑History RoomCode🏰</a>
             <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+            <a href="evaluation.html">🙇🏻 Evaluation 🙇🏻‍♀️</a>
             <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
         </div>
     
@@ -232,6 +233,7 @@ button.selected {
                     <th>Level</th>
                     <th>Type</th>
                     <th>Question</th>
+                    <th>ลบคำถามออกจากระบบ</th>
                     <th>เลือกคำถาม</th>
                 </tr>
             </thead>
@@ -284,6 +286,7 @@ button.selected {
     <td>${quiz.level}</td>
     <td>${quiz.type}</td>
     <td>${quiz.question}</td>
+    <td><button class="delete-btn" data-id="${quiz._id}">ลบคำถามนี้</button></td>
     <td><button class="select-btn" data-score="${quiz.score || getScoreByLevel(quiz.level)}" data-timer="${quiz.timer || 0}">เลือกคำถาม</button></td>
 `;
             tableBody.appendChild(row);
@@ -386,6 +389,28 @@ document.getElementById('level-filter').addEventListener('change', fetchQuestion
         // ฟังก์ชันกรองคำถามเมื่อเปลี่ยนการเลือกเลเวล
 document.getElementById('type-filter').addEventListener('change', fetchQuestions);
 
+        //ลบคำถาม
+document.addEventListener('click', async (event) => {
+    if (event.target.classList.contains('delete-btn')) {
+        const quizId = event.target.dataset.id;
+
+        if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบคำถามนี้?")) {
+            try {
+                const response = await fetch(`/delete-quiz/${quizId}`, { method: 'DELETE' });
+
+                if (response.ok) {
+                    alert('ลบคำถามสำเร็จ');
+                    fetchQuestions();  // โหลดตารางใหม่หลังลบ
+                } else {
+                    alert('เกิดข้อผิดพลาดในการลบคำถาม');
+                }
+            } catch (error) {
+                console.error("Error deleting question:", error);
+            }
+        }
+    }
+});
+
 function createMeteor() {
     const meteor = document.createElement('div');
     meteor.classList.add('meteor');
@@ -423,7 +448,7 @@ document.getElementById('save-roomcode-btn').addEventListener('click', async fun
     };
 
     try {
-        const response = await fetch('https://sarisa-28pcpp-github-io.onrender.com/save-roomcode', {
+        const response = await fetch('https://sarisa-28pcpp-github-io.onrender.com', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

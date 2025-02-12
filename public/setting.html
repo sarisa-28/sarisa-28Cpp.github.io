@@ -1,4 +1,4 @@
-<!--setting.html-->
+<!--public/setting.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -22,7 +22,7 @@
     align-items: center;
     height: 100vh;
     margin: 0;
-    padding-top: 150px; /* เพิ่มระยะห่างสำหรับเมนูด้านบน */
+    padding-top: 250px; /* เพิ่มระยะห่างสำหรับเมนูด้านบน */
 }
         .login-container {
     background: rgba(0, 0, 0, 0.7);
@@ -131,7 +131,7 @@
         #admin-top-menu a {
             color: white;
             text-decoration: none;
-            font-size: 18px;
+            font-size: 20px;
             margin: 0 15px;
             padding: 10px;
             border-radius: 5px;
@@ -164,7 +164,7 @@
         #player-top-menu a {
             color: white;
             text-decoration: none;
-            font-size: 18px;
+            font-size: 20px;
             margin: 0 15px;
             padding: 10px;
             border-radius: 5px;
@@ -196,14 +196,17 @@
             <a href="roomcode.html"><i class="fas fa-key fa-solid fa-flip"  style="--fa-animation-duration: 3s; color: cyan;"></i> Set Room Code</a>  
             <a href="seeroom.html">🚩View Room Codes👀</a> 
             <a href="scores.html"><i class="fas fa-trophy fa-beat" style="color: cyan;"></i> View Scores</a>
+            <a href="historyroomcode.html">👑History RoomCode🏰</a>
             <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
-            <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
+            <p><a href="evaluation.html">🙇🏻 Evaluation 🙇🏻‍♀️</a>
+            <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a></p>
         </div>
     <!-- แถบเมนูข้างบนของplayer -->
     <div id="player-top-menu">
         <a href="play.html"><i class="fa-solid fas fa-home fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Play Game</a>
         <a href="history.html"><i class="fas fa-history fa-beat" style="color: cyan;"></i> History</a>  
         <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+        <a href="evaluation.html"><i class="fa-solid fa-thumbs-up fa-flip" style="--fa-animation-duration: 3s; color: cyan;"></i> Evaluation</a>
         <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
     </div>
 
@@ -247,10 +250,11 @@
 
       <!-- ปุ่ม Reset Password -->
       <button type="button" class="btn" onclick="handlePasswordReset()">Reset Password</button>
+    <a href="#" class="link" onclick="showLoginForm()">Back to Login</a>
 </div>
 
     <script>
-        const API_BASE_URL = "https://sarisa-28pcpp-github-io.onrender.com";
+        const API_BASE_URL = "https://sarisa-28pcpp-github-io.onrender.com"; // ปรับให้ตรงกับ URL ของ API
 
     // ดึงชื่อผู้ใช้จาก sessionStorage หรือ localStorage ถ้ามี
     const username = sessionStorage.getItem('username'); // หรือใช้ localStorage.getItem('username');
@@ -288,6 +292,7 @@
 
         if (response.ok) {
             alert('Password reset successful!');
+            showLoginForm();
         } else {
             const errorText = await response.text();
             alert(`Failed to reset password: ${errorText}`);
@@ -328,6 +333,10 @@ async function sendOTP() {
         alert('An error occurred while sending OTP. Please try again.');
     }
 }
+
+        function showLoginForm() {
+            window.location.href = "play.html"; // เปลี่ยนไปที่หน้า Login
+        }
 
 //แบ่งแยกเมนูระหว่าง Admin และ Player
 var loginType = localStorage.getItem("loginType"); // ดึงค่าจาก localStorage

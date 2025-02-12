@@ -194,6 +194,10 @@ app.get("/scores.html", (req, res) => {
 app.get("/historyroomcode.html", (req, res) => {
     res.sendFile(path.join(__dirname, ".../public/historyroomcode.html"));
 });
+app.get("/evaluation.html", (req, res) => {
+    res.sendFile(path.join(__dirname, ".../public/evaluation.html"));
+});
+
 
 // เส้นทางสำหรับการล็อกอิน
 app.post('/login', async (req, res) => {
@@ -580,7 +584,17 @@ io.on('connection', (socket) => {
 
         console.log(`Players in room ${roomCode}:`, roomPlayers[roomCode]?.length || 0);
     });
+    socket.on('player-answer', ({ roomCode, playerName, playerAnswer, correctAnswer, level }) => {
+        let points = level === 1 ? 1 : level === 2 ? 3 : 5;
+        let isCorrect = playerAnswer.toLowerCase().trim() === correctAnswer.toLowerCase().trim();
+        
+        if (isCorrect) {
+            playerScores[roomCode][playerName] += points;
+        }
 
+        let currentScore = playerScores[roomCode][playerName];
+        io.to(roomCode).emit('score-popup', { playerName, correctAnswer, playerAnswer, currentScore });
+    });
     socket.on('disconnect', () => {
         // ตรวจสอบว่าผู้เล่นอยู่ใน roomPlayers หรือไม่
         for (let roomCode in roomPlayers) {
@@ -846,6 +860,21 @@ app.get('/api/historyroomcode/:roomCode', async (req, res) => {
     } catch (error) {
         console.error('Error fetching history for room:', error);
         res.status(500).send('Error fetching history for room');
+    }
+});
+app.delete('/delete-quiz/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+        const deletedQuiz = await Quiz.findByIdAndDelete(id);
+
+        if (!deletedQuiz) {
+            return res.status(404).json({ error: "คำถามไม่พบ" });
+        }
+
+        res.status(200).json({ message: "ลบคำถามสำเร็จ" });
+    } catch (error) {
+        console.error("Error deleting quiz:", error);
+        res.status(500).json({ error: "เกิดข้อผิดพลาดในการลบคำถาม" });
     }
 });
 

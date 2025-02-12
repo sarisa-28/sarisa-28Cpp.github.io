@@ -431,6 +431,41 @@ button:hover {
     box-shadow: 0 0 15px rgba(173, 216, 230, 1);
     transform: scale(1.05);
 }
+        /* สไตล์สำหรับ Score Popup */
+        #score-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.85);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            z-index: 10000;
+            box-shadow: 0px 0px 20px rgba(0, 153, 255, 0.8);
+        }
+        #score-popup h2 {
+            margin-bottom: 10px;
+            font-size: 50px;
+            color: cyan;
+        }
+        #score-popup p {
+            font-size: 30px;
+            margin: 5px 0;
+        }
+        #overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+            z-index: 999;
+        }
     </style>
 </head>
 <body>  
@@ -439,6 +474,7 @@ button:hover {
         <a href="play.html"><i class="fa-solid fas fa-home fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Play Game</a>
         <a href="history.html"><i class="fas fa-history fa-beat" style="color: cyan;"></i> History</a>  
         <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+        <a href="evaluation.html"><i class="fa-solid fa-thumbs-up fa-flip" style="--fa-animation-duration: 3s; color: cyan;"></i> Evaluation</a>
         <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
     </div>
     
@@ -491,6 +527,15 @@ button:hover {
 
 </div>
 
+<div id="overlay"></div>
+<!-- pop up แสดงคะแนนและคำตอบของผู้เล่น -->
+<div id="score-popup">
+    <h2>Score Update</h2>
+    <p>Correct Answer: <span id="correct-answer"></span></p>
+    <p>Your Answer: <span id="player-answer"></span></p>
+    <p>Current Score: <span id="current-score"></span></p>
+</div>
+
 <!-- เอฟเฟกต์หน้าบึ้ง -->
 <div id="sad-face">
     <span>😡</span>
@@ -521,6 +566,7 @@ let playerScore = 0;
 // เมื่อผู้เล่นเข้าห้อง
 document.getElementById('submit-room-code').addEventListener('click', async () => {
 roomCode = document.getElementById('room-code').value;
+document.getElementById('overlay').style.display = 'none';
 if (roomCode) {
     try {
         const response = await fetch(`/roomcode/${roomCode}`);
@@ -547,6 +593,7 @@ if (roomCode) {
 document.getElementById('start-quiz').addEventListener('click', () => {
     playerName = document.getElementById('player-name').value.trim(); // ดึงชื่อผู้เล่น
     roomCode = document.getElementById('room-code').value; // ดึงรหัสห้อง
+    document.getElementById('overlay').style.display = 'none';
     if (playerName) {
         sessionStorage.setItem('name', playerName); // บันทึกชื่อใน sessionStorage
         socket.emit('join-room', roomCode, playerName); // ส่งชื่อไปเซิร์ฟเวอร์
@@ -568,11 +615,14 @@ socket.on('game-started', () => {
     // เริ่มการแสดงคำถาม
     document.getElementById('quiz-container').style.display = 'block';
     displayQuiz(currentQuestionIndex);
+
+    document.getElementById('overlay').style.display = 'none';
 });
 
 // ฟังเหตุการณ์เกมเริ่มแล้ว
 socket.on('game-started', () => {
 document.getElementById('quiz-container').style.display = 'block';
+document.getElementById('overlay').style.display = 'none';
 displayQuiz(currentQuestionIndex);
 });
 
@@ -589,6 +639,9 @@ try {
 
 // ฟังก์ชันสำหรับแสดงคำถาม
 function displayQuiz(index) {
+    clearInterval(timerInterval); // หยุด timer เก่าก่อนสร้างใหม่
+    console.log("displayQuiz called, resetting timer...");
+    document.getElementById('overlay').style.display = 'none';
         if (!quizzes[index]) {
             console.error('No quiz data found at index:', index);
             alert('Quiz data is missing or invalid!');
@@ -644,6 +697,7 @@ clearInterval(timerInterval);
 timerInterval = setInterval(() => {
     timeLeft--;
     document.getElementById('time-left').innerText = timeLeft;
+    document.getElementById('overlay').style.display = 'none';
     if (timeLeft <= 0) {
         clearInterval(timerInterval);
         currentQuestionIndex++;
@@ -658,7 +712,11 @@ timerInterval = setInterval(() => {
 
 // ฟังก์ชันตรวจคำตอบปรนัย
 function checkAnswer(selectedIndex, correctIndex, level) {
-clearInterval(timerInterval); // หยุดนาฬิกาเมื่อเลือกคำตอบ
+    console.log("checkAnswer called, stopping timer...");
+    clearInterval(timerInterval); // หยุดเวลา
+    document.getElementById('overlay').style.display = 'none';
+let correctAnswerText = quizzes[currentQuestionIndex].options[correctIndex]; // คำตอบที่ถูกต้อง
+let playerAnswerText = quizzes[currentQuestionIndex].options[selectedIndex]; // คำตอบที่ผู้เล่นเลือก
 if (selectedIndex === correctIndex) {
     let points = level === 1 ? 1 : level === 2 ? 3 : 5;
     score += points;
@@ -668,13 +726,15 @@ if (selectedIndex === correctIndex) {
     showSadFace(); // แสดงหน้าบึ้งเมื่อคำตอบผิด
     alert('Wrong!');
 }
-loadNextQuestion();
+showScorePopup(correctAnswerText, playerAnswerText, score);
 }
 
 // ฟังก์ชันตรวจคำตอบอัตนัย
 function checkOpenAnswer(playerAnswer, correctAnswer, level) {
-    clearInterval(timerInterval);
-
+    console.log("checkAnswer called, stopping timer...");
+    clearInterval(timerInterval); // หยุดเวลา
+    document.getElementById('overlay').style.display = 'none';
+    
     // ตรวจสอบว่า playerAnswer และ correctAnswer เป็นสตริงก่อนเรียกใช้ trim()
     if (playerAnswer && correctAnswer) {
     let sanitizedPlayerAnswer = String(playerAnswer).toLowerCase().trim();
@@ -696,8 +756,7 @@ function checkOpenAnswer(playerAnswer, correctAnswer, level) {
 } else {
     alert('Invalid answer format');
 }
-
-    loadNextQuestion();
+    showScorePopup(correctAnswer, playerAnswer, score);
 }
 
 // เมื่อผู้เล่นกดปุ่ม submit สำหรับคำถามอัตนัย
@@ -717,6 +776,7 @@ document.getElementById('submit-open-answer').addEventListener('click', () => {
 
 function loadNextQuestion() {
 currentQuestionIndex++;
+document.getElementById('overlay').style.display = 'none';
 if (currentQuestionIndex < quizzes.length) {
     displayQuiz(currentQuestionIndex);
 } else {
@@ -776,6 +836,7 @@ score = 0;
 document.getElementById('player-info').style.display = 'block';
 document.getElementById('username-display').style.display = 'block';
 document.getElementById('quiz-container').style.display = 'none';
+document.getElementById('overlay').style.display = 'none';
 }
 
 function showSadFace() {
@@ -785,6 +846,35 @@ setTimeout(() => {
     sadFace.style.display = 'none';
 }, 2000); // แสดงผล 2 วินาที
 }
+
+function showScorePopup(correct, player, score) {
+    console.log("checkAnswer called, stopping timer...");
+    clearInterval(timerInterval); // หยุดเวลา
+    document.getElementById('overlay').style.display = 'block';
+
+    document.getElementById('correct-answer').innerText = correct;
+    document.getElementById('player-answer').innerText = player;
+    document.getElementById('current-score').innerText = score;
+
+    const popup = document.getElementById('score-popup');
+    popup.style.display = 'block';
+
+    // ตรวจสอบว่าคำตอบของผู้เล่นถูกต้องหรือไม่
+    const correctAnswerStr = String(correct).trim().toLowerCase();
+    const playerAnswerStr = String(player).trim().toLowerCase();
+
+    if (playerAnswerStr === correctAnswerStr) {
+        launchConfetti(); // แสดงพลุถ้าตอบถูก
+    } else {
+        showSadFace(); // แสดงหน้าบึ้งถ้าตอบผิด
+    }
+
+    setTimeout(() => {
+        popup.style.display = 'none';
+        loadNextQuestion();
+    }, 5000); // แสดงผล 5 วินาที แล้วโหลดคำถามถัดไป
+}
+
 
 function launchConfetti() {
 // เรียกใช้ canvas-confetti เพื่อแสดงพลุแบบสุ่ม
@@ -824,30 +914,47 @@ setTimeout(() => {
 }, 2000); // แสดงผล 2 วินาที
 }
 
-// แสดงพลุเมื่อจบคำถาม
+// แสดงพลุเมื่อจบคำถาม จนกว่าผู้ใช้จะกดปุ่ม OK
 function showFinalCelebration() {
-launchConfetti();
-setTimeout(() => launchConfetti(), 500); // เพิ่มพลุซ้ำอีกครั้ง
-const fireworks = document.createElement('div');
-fireworks.innerHTML = '<h2 style="color: white;">Congratulations!</h2>';
-fireworks.style.position = 'fixed';
-fireworks.style.top = '50%';
-fireworks.style.left = '50%';
-fireworks.style.transform = 'translate(-50%, -50%)';
-fireworks.style.textAlign = 'center';
-fireworks.style.zIndex = '10000';
-fireworks.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
-fireworks.style.padding = '20px';
-fireworks.style.borderRadius = '10px';
+    // สร้าง interval เพื่อให้พลุทำงานตลอดเวลา
+    const confettiInterval = setInterval(launchConfetti, 500);
 
-const okButton = document.createElement('button');
-okButton.innerText = 'OK';
-okButton.style.marginTop = '10px';
-okButton.onclick = () => fireworks.remove();
+    const fireworks = document.createElement('div');
+    fireworks.innerHTML = `
+        <h2 style="color: orangered; font-size: 50px; text-shadow: 3px 3px 6px cyan; margin-bottom: 20px;">
+            <p>💣 Game Over 🤯</p> 
+            <p>🤩 Congratulations! You can see your score now 🤩!</p>
+        </h2>
+    `;
+    fireworks.style.position = 'fixed';
+    fireworks.style.top = '50%';
+    fireworks.style.left = '50%';
+    fireworks.style.transform = 'translate(-50%, -50%)';
+    fireworks.style.textAlign = 'center';
+    fireworks.style.zIndex = '10000';
+    fireworks.style.backgroundColor = 'rgba(0, 0, 0, 0.8)';
+    fireworks.style.padding = '20px';
+    fireworks.style.borderRadius = '10px';
 
-fireworks.appendChild(okButton);
-document.body.appendChild(fireworks);
+    const okButton = document.createElement('button');
+    okButton.innerText = 'OK';
+    okButton.style.marginTop = '10px';
+    okButton.style.padding = '10px 20px';
+    okButton.style.fontSize = '18px';
+    okButton.style.border = 'none';
+    okButton.style.borderRadius = '5px';
+    okButton.style.backgroundColor = 'cyan';
+    okButton.style.color = 'black';
+    okButton.style.cursor = 'pointer';
+    okButton.onclick = () => {
+        clearInterval(confettiInterval); // หยุดพลุ
+        fireworks.remove();
+    };
+
+    fireworks.appendChild(okButton);
+    document.body.appendChild(fireworks);
 }
+
 
 // ฟังก์ชันแสดงจรวดและคะแนน
 function showRocketAndScore(score) {
@@ -920,6 +1027,7 @@ const datePlayed = new Date().toISOString(); // กำหนดค่าขอ�
 const uniqueIdentifier = `${username}-${new Date().getTime()}`; // กำหนดค่าของ uniqueIdentifier
 
 savePlayerScore(playerName, score, username, roomCode, datePlayed, uniqueIdentifier);
+showFinalCelebration(); // แสดงพลุเมื่อคำตอบถูก
 showRocketAndScore(score);
 socket.emit('player-score', {
             name: playerName,
