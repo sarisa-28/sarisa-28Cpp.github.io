@@ -221,9 +221,18 @@ h2 {
     }
 }
 
+@keyframes rotate360 {
+    from {
+        transform: scale(1.5) rotate(0deg);
+    }
+    to {
+        transform: scale(1.5) rotate(360deg);
+    }
+}
+
 /* เอฟเฟกต์เมื่อ hover */
 .puzzle-piece:hover {
-    transform: scale(1.5) rotate(12deg); /* ขยายขนาดและหมุน */
+    animation: rotate360 5s linear infinite; /* หมุน 360 องศาช้าๆ และต่อเนื่อง */
     box-shadow: 0 0 40px rgba(255, 165, 0, 1);
 }
         /* Modal styling */
