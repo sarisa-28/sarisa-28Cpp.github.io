@@ -216,7 +216,7 @@
                             <h4>Total Essay: ${data.totalEssay}</h4>
                             <h4>Total Question: ${data.selectedQuestions.length}</h4>
                             <h4>Total Score: ${data.totalScore}</h4>
-                            <h4>Total Time: ${data.totalTime} s. </h4>
+                            <h4>Total Time: ${Math.floor(data.totalTime / 60)} นาที ${data.totalTime % 60} วินาที</h4>
                         `;
 
                         if (data.selectedQuestions.length === 0) {

@@ -341,7 +341,7 @@ button.selected {
                     document.getElementById("total-essay").textContent = totalEssay;
                     document.getElementById("total-questions").textContent = selectedQuestions.length;
                     document.getElementById("total-score").textContent = totalScore;
-                    document.getElementById("total-time").textContent = totalTime;
+                    document.getElementById("total-time").textContent = `${Math.floor(totalTime / 60)} นาที ${totalTime % 60} วินาที`;
                     console.log("Updated Total Time:", totalTime); // ตรวจสอบค่า totalTime
 
                     // เปลี่ยนสีปุ่มที่ถูกเลือก
@@ -373,7 +373,7 @@ document.getElementById("reset-btn").addEventListener("click", () => {
         document.getElementById("total-essay").textContent = totalEssay;
         document.getElementById("total-questions").textContent = selectedQuestions.length;
         document.getElementById("total-score").textContent = totalScore;
-        document.getElementById("total-time").textContent = totalTime;  
+        document.getElementById("total-time").textContent = `${Math.floor(totalTime / 60)} นาที ${totalTime % 60} วินาที`;  
 
     // รีเซ็ทปุ่มทั้งหมดในตารางที่ถูกเลือก (โดยการเอาคลาส selected ออก)
     document.querySelectorAll(".select-btn").forEach(button => {
