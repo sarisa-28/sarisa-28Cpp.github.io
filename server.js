@@ -22,8 +22,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // เชื่อมต่อ MongoDB
 mongoose.connect('mongodb+srv://sarisat:cpp1234@cluster0.ezcgx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
 }).then(() => {
     console.log("Connected to MongoDB successfully");
 }).catch((error) => {
