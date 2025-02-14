@@ -198,7 +198,6 @@ app.get("/evaluation.html", (req, res) => {
     res.sendFile(path.join(__dirname, ".../public/evaluation.html"));
 });
 
-
 // เส้นทางสำหรับการล็อกอิน
 app.post('/login', async (req, res) => {
     const { username, password, type } = req.body;
@@ -543,6 +542,9 @@ app.post('/start-game/:roomCode', async (req, res) => {
             return res.status(404).send('Room not found.');
         }
 
+        // รีเซ็ตคะแนนของห้องเมื่อเริ่มเกมใหม่
+        playerScores[roomCode] = {};  
+
         // อัพเดตสถานะว่าเกมเริ่มแล้ว
         room.gameStarted = true;
         await room.save();
@@ -644,13 +646,15 @@ io.on('connection', (socket) => {
         }
     });
     socket.on('player-score', ({ name, roomCode, score }) => {
-        if (!playerScores[roomCode]) {
-            playerScores[roomCode] = [];
+        if (!playerScores[roomCode] || !Array.isArray(playerScores[roomCode])) {
+            playerScores[roomCode] = []; // กำหนดให้เป็นอาร์เรย์เสมอ
         }
+    
         playerScores[roomCode].push({ name, score });
-
+    
         io.to(roomCode).emit('update-player-scores', playerScores[roomCode]);
     });
+    
 
     socket.on('end-game', () => {
         playerScores = {}; // รีเซ็ตคะแนนเมื่อจบเกม

@@ -401,40 +401,30 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ฟังสัญญาณอัพเดทคะแนนจากเซิร์ฟเวอร์
     socket.on('update-player-scores', (players) => {
-        playerScoreList.innerHTML = ''; // ล้างรายการเก่า
+    // รีเซ็ต player-score-list ทุกครั้งที่ได้รับคะแนนใหม่
+    playerScoreList.innerHTML = '';
 
-        // เรียงคะแนนจากมากไปน้อย
-        players.sort((a, b) => b.score - a.score);
+    // เรียงคะแนนจากมากไปน้อย
+    players.sort((a, b) => b.score - a.score);
 
-        let currentRank = 1; // เริ่มต้นอันดับที่ 1
-        let previousScore = null;
-        let rankOffset = 0; // ใช้เลื่อนอันดับเมื่อคะแนนเท่ากัน
+    let currentRank = 1;
+    let previousScore = null;
+    let rankOffset = 0;
 
-        players.forEach((player, index) => {
-            // ถ้าคะแนนเปลี่ยนแปลงจากผู้เล่นก่อนหน้า ให้เพิ่มอันดับ
-            if (player.score !== previousScore) {
-                currentRank += rankOffset;
-                rankOffset = 1; // รีเซ็ต rankOffset
-            } else {
-                rankOffset++; // ถ้าคะแนนเท่ากัน ใช้อันดับเดิม
-            }
-            previousScore = player.score;
-
-            const li = document.createElement('li');
-            li.textContent = `🏆 Rank ${currentRank}: ${player.name} - ${player.score} points`;
-            playerScoreList.appendChild(li);
-        });
-            // ดึงข้อมูลคะแนนเฉพาะรอบปัจจุบันจากเซิร์ฟเวอร์
-    async function fetchCurrentScores() {
-        try {
-            const response = await fetch(`/get-current-scores/${roomCode}`);
-            const data = await response.json();
-            updatePlayerScores(data.players);
-        } catch (error) {
-            console.error("Error fetching current scores:", error);
+    players.forEach((player) => {
+        if (player.score !== previousScore) {
+            currentRank += rankOffset;
+            rankOffset = 1;
+        } else {
+            rankOffset++;
         }
-    }
+        previousScore = player.score;
+
+        const li = document.createElement('li');
+        li.textContent = `🏆 Rank ${currentRank}: ${player.name} - ${player.score} points`;
+        playerScoreList.appendChild(li);
     });
+});
 });
 
 // เมื่อกดปุ่ม End Game
