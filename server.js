@@ -878,6 +878,21 @@ app.delete('/delete-quiz/:id', async (req, res) => {
     }
 });
 
+// เพิ่ม API ค้นหาroomcode history
+app.get('/api/history/search/:roomCode', async (req, res) => {
+    const { roomCode } = req.params;
+    try {
+        const history = await HistoryRoomCode.findOne({ roomCode });
+        if (!history) {
+            return res.status(404).json({ error: 'No history found for this Room Code' });
+        }
+        res.json(history);
+    } catch (error) {
+        console.error('Error fetching history:', error);
+        res.status(500).send('Error fetching history');
+    }
+});
+
 // เริ่มเซิร์ฟเวอร์
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => {

@@ -7,26 +7,6 @@
     <title>History Room Code</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
-                /* การเคลื่อนไหวดาวตกที่ช้าและมีเอฟเฟ็กต์ */
-@keyframes meteor-shower {
-    0% {
-        transform: translateY(-100vh) rotate(0deg);
-    }
-    50% {
-        transform: translateY(50vh) rotate(180deg);
-    }
-    100% {
-        transform: translateY(100vh) rotate(360deg);  /* หมุนและตกไปที่ล่าง */
-    }
-}
-.meteor {
-    position: absolute;
-    top: -10px;
-    background-color: rgba(255, 255, 255, 0.8);
-    border-radius: 50%;
-    animation: meteor-shower 5s linear infinite;
-}
-
         body {
             font-family: 'Orbitron', sans-serif;
             background: url('https://spaceth.co/wp-content/uploads/2019/03/dnb_land_ocean_ice.2012.3600x1800-1024x512.jpg') no-repeat center center fixed;
@@ -211,6 +191,84 @@ h1 {
             font-size: 40px;
             margin-top: 50px;
         }
+        #modal-players {
+    max-height: 300px; /* กำหนดความสูงสูงสุดของรายการผู้เล่น */
+    overflow-y: auto; /* เปิดให้เลื่อนแนวตั้ง */
+    padding: 10px;
+    text-align: left;
+    background: transparent; /* ทำให้พื้นหลังใส */
+    border: 2px solid cyan; /* ขอบสีขาวโปร่งแสง */
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.5); /* เพิ่มเงาให้ดูชัดขึ้น */
+}
+        /* การเคลื่อนไหวดาวตกที่ช้าและมีเอฟเฟ็กต์ */
+        @keyframes meteor-shower {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+    }
+    50% {
+        transform: translateY(50vh) rotate(180deg);
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);  /* หมุนและตกไปที่ล่าง */
+    }
+}
+.meteor {
+    position: absolute;
+    top: -10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: meteor-shower 5s linear infinite;
+}
+/* ตกแต่งปุ่มและ input แบบธีมอวกาศ */
+#search-section-history {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin: 20px auto;
+    padding: 15px;
+    background: rgba(0, 0, 50, 0.8);
+    border-radius: 15px;
+    box-shadow: 0 0 15px cyan;
+}
+
+#search-roomcode-history {
+    padding: 12px;
+    width: 200px;
+    font-size: 16px;
+    border: 2px solid cyan;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px cyan;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+}
+
+#search-roomcode-history:focus {
+    border-color: #ff00ff;
+    box-shadow: 0 0 20px #ff00ff;
+}
+
+#search-btn-history {
+    padding: 12px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    color: white;
+    background: linear-gradient(45deg, #ff007f, #ff4500);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 0 15px rgba(255, 0, 255, 0.7);
+    transition: all 0.3s ease-in-out;
+}
+
+#search-btn-history:hover {
+    background: linear-gradient(45deg, #ff4500, #ff007f);
+    box-shadow: 0 0 25px rgba(255, 165, 0, 1);
+    transform: scale(1.1);
+}
 
     </style>
 </head>
@@ -230,6 +288,11 @@ h1 {
         
         <div id="overlay"></div>
         <h1>🫅 History of Room Codes 👸</h1>
+        <div id="search-section-history">
+            <input type="text" id="search-roomcode-history" placeholder="Enter Room Code">
+            <button id="search-btn-history">Search</button>
+        </div>
+
         <div class="container" id="history-container"></div>
         <div id="history-modal" class="modal">
             <h2>🎖️History of playing room codes🔥</h2>
@@ -281,8 +344,21 @@ h1 {
             }
             window.onload = fetchHistory;
 
-                                    // สร้างดาวตกใหม่
-                                    function createMeteor() {
+// อัปเดต historyroomcode.html
+const searchHistoryByRoomCode = () => {
+    const roomCodeInput = document.getElementById('search-roomcode-history').value.trim();
+    const historyContainer = document.getElementById('history-container');
+    const histories = historyContainer.getElementsByClassName('history-box');
+    
+    Array.from(histories).forEach(history => {
+        history.style.display = history.innerText.includes(roomCodeInput) ? 'block' : 'none';
+    });
+};
+
+document.getElementById('search-btn-history').addEventListener('click', searchHistoryByRoomCode);
+
+            // สร้างดาวตกใหม่
+            function createMeteor() {
             const meteor = document.createElement('div');
             meteor.classList.add('meteor');
             document.body.appendChild(meteor);
@@ -300,6 +376,8 @@ h1 {
         }
 
         setInterval(createMeteor, 500);
+
+
         </script>
     </body>
     </html>
