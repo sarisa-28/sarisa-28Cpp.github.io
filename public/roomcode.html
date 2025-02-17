@@ -229,6 +229,23 @@ button.selected {
     transform: scale(1.1);
     background: #00ffff;
 }
+#total-questions-info {
+    background: rgba(0, 0, 50, 0.9);
+    border: 1px solid cyan;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+#total-questions-info p {
+    font-size: 18px;
+    font-weight: bold;
+    color: cyan;
+    margin: 5px 0;
+}
+
     </style>
 </head>
 <body>
@@ -288,6 +305,11 @@ button.selected {
         
         <div id="menu3">
             <h3>เลือกคำถามแบบสุ่ม</h3>
+            <div id="total-questions-info">
+                <p>📊 จำนวนคำถามทั้งหมดในระบบ: <span id="total-questions-all">0</span> ข้อ</p>
+                <p>✅ Multiple-Choice: <span id="total-multiple-all">0</span></p>
+                <p>📝 Essay: <span id="total-essay-all">0</span></p>
+            </div>
             <ul>
                 <li>จำนวนคำถามระดับ 1: <input type="number" id="level1-count" min="0" value="0"></li>
                 <li>จำนวนคำถามระดับ 2: <input type="number" id="level2-count" min="0" value="0"></li>
@@ -614,6 +636,42 @@ function updateMenu2() {
     document.getElementById("total-score").textContent = totalScore;
     document.getElementById("total-time").textContent = `${Math.floor(totalTime / 60)} นาที ${totalTime % 60} วินาที`;
 }
+
+//แสดงจำนวนคำถาม
+async function updateTotalQuestionsInfo() {
+    try {
+        const response = await fetch('/quiz'); // ดึงข้อมูลคำถามทั้งหมดจากเซิร์ฟเวอร์
+        const questions = await response.json();
+
+        let totalQuestions = questions.length;
+
+        // คำนวณจำนวนคำถามแบบ multiple-choice
+        const multipleChoiceQuestions = questions.filter(q => q.type === "multiple-choice");
+        let multipleChoiceCount = multipleChoiceQuestions.length;
+        let multipleLevel1 = multipleChoiceQuestions.filter(q => q.level == 1).length;
+        let multipleLevel2 = multipleChoiceQuestions.filter(q => q.level == 2).length;
+        let multipleLevel3 = multipleChoiceQuestions.filter(q => q.level == 3).length;
+
+        // คำนวณจำนวนคำถามแบบ essay
+        const essayQuestions = questions.filter(q => q.type === "essay");
+        let essayCount = essayQuestions.length;
+        let essayLevel1 = essayQuestions.filter(q => q.level == 1).length;
+        let essayLevel2 = essayQuestions.filter(q => q.level == 2).length;
+        let essayLevel3 = essayQuestions.filter(q => q.level == 3).length;
+
+        // อัปเดตข้อมูลในหน้าเว็บ
+        document.getElementById("total-questions-all").textContent = totalQuestions;
+        document.getElementById("total-multiple-all").textContent = `${multipleChoiceCount} ข้อ (เลเวล1: ${multipleLevel1} ข้อ, เลเวล2: ${multipleLevel2} ข้อ, เลเวล3: ${multipleLevel3} ข้อ )`;
+        document.getElementById("total-essay-all").textContent = `${essayCount} ข้อ (เลเวล1: ${essayLevel1} ข้อ, เลเวล2: ${essayLevel2} ข้อ, เลเวล3: ${essayLevel3} ข้อ )`;
+        
+    } catch (error) {
+        console.error("Error fetching total questions:", error);
+    }
+}
+
+// เรียกใช้ฟังก์ชันเพื่อโหลดข้อมูลตอนเปิดหน้าเว็บ
+updateTotalQuestionsInfo();
+
 
 // สร้างดาวตกใหม่
 function createMeteor() {
