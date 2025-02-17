@@ -895,6 +895,45 @@ app.get('/api/history/search/:roomCode', async (req, res) => {
     }
 });
 
+//แรนด้อมคำถาม
+app.post('/random-questions', async (req, res) => {
+    const { level1, level2, level3, multipleChoice, essay } = req.body;
+
+    try {
+        let questions = [];
+
+        if (level1 > 0) {
+            const level1Questions = await Quiz.aggregate([{ $match: { level: 1 } }, { $sample: { size: level1 } }]);
+            questions.push(...level1Questions);
+        }
+
+        if (level2 > 0) {
+            const level2Questions = await Quiz.aggregate([{ $match: { level: 2 } }, { $sample: { size: level2 } }]);
+            questions.push(...level2Questions);
+        }
+
+        if (level3 > 0) {
+            const level3Questions = await Quiz.aggregate([{ $match: { level: 3 } }, { $sample: { size: level3 } }]);
+            questions.push(...level3Questions);
+        }
+
+        if (multipleChoice > 0) {
+            const mcQuestions = await Quiz.aggregate([{ $match: { type: 'multiple-choice' } }, { $sample: { size: multipleChoice } }]);
+            questions.push(...mcQuestions);
+        }
+
+        if (essay > 0) {
+            const essayQuestions = await Quiz.aggregate([{ $match: { type: 'essay' } }, { $sample: { size: essay } }]);
+            questions.push(...essayQuestions);
+        }
+
+        res.status(200).json({ questions });
+    } catch (error) {
+        console.error("Error fetching random questions:", error);
+        res.status(500).json({ error: "Error fetching random questions" });
+    }
+});
+
 // เริ่มเซิร์ฟเวอร์
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {

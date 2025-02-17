@@ -171,6 +171,64 @@ button.selected {
     background-color: darkred;
     box-shadow: 0 0 15px rgb(234, 87, 8);
 }
+
+/* เมนูสุ่มคำถาม (menu3) แบบธีมอวกาศ */
+#menu3 {
+    background: linear-gradient(135deg, rgba(10,10,30,0.8), rgba(0,0,50,0.9));
+    border: 2px solid cyan;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+    padding: 20px;
+    color: white;
+    font-family: 'Orbitron', sans-serif; /* หรือใช้ฟอนต์ที่มีลักษณะเท่ */
+    margin: 20px;
+}
+
+#menu3 h3 {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 15px;
+    color: burlywood;
+    text-shadow: 1px 1px 5px rgba(0, 255, 255, 0.8);
+}
+
+#menu3 ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#menu3 li {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+#menu3 input[type="number"] {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid cyan;
+    border-radius: 5px;
+    padding: 5px;
+    color: white;
+    width: 60px;
+    text-align: center;
+}
+
+#menu3 button {
+    background: cyan;
+    border: none;
+    border-radius: 5px;
+    color: black;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.3s;
+    margin: 5px 0;
+    font-weight: bold;
+}
+
+#menu3 button:hover {
+    transform: scale(1.1);
+    background: #00ffff;
+}
     </style>
 </head>
 <body>
@@ -227,6 +285,20 @@ button.selected {
                 <option value="essay">Essay</option>
             </select>
         </div>
+        
+        <div id="menu3">
+            <h3>เลือกคำถามแบบสุ่ม</h3>
+            <ul>
+                <li>จำนวนคำถามระดับ 1: <input type="number" id="level1-count" min="0" value="0"></li>
+                <li>จำนวนคำถามระดับ 2: <input type="number" id="level2-count" min="0" value="0"></li>
+                <li>จำนวนคำถามระดับ 3: <input type="number" id="level3-count" min="0" value="0"></li>
+                <li>จำนวน Multiple Choice: <input type="number" id="mc-count" min="0" value="0"></li>
+                <li>จำนวน Essay: <input type="number" id="essay-count" min="0" value="0"></li>
+                <button id="random-select-btn">เลือกคำถามแบบสุ่ม</button>          
+                </li>
+            </ul>
+        </div>
+        
         <table id="quiz-table">
             <thead>
                 <tr>
@@ -473,6 +545,75 @@ document.getElementById('save-roomcode-btn').addEventListener('click', async fun
         alert("ไม่สามารถบันทึกข้อมูลได้.");
     }
 });
+
+//เลือกคำถามแบบแรนด้อม
+document.getElementById("random-select-btn").addEventListener("click", async () => {
+    const level1 = parseInt(document.getElementById("level1-count").value, 10);
+    const level2 = parseInt(document.getElementById("level2-count").value, 10);
+    const level3 = parseInt(document.getElementById("level3-count").value, 10);
+    const multipleChoice = parseInt(document.getElementById("mc-count").value, 10);
+    const essay = parseInt(document.getElementById("essay-count").value, 10);
+
+    try {
+        const response = await fetch('/random-questions', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ level1, level2, level3, multipleChoice, essay })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            selectedQuestions = data.questions;  // เก็บคำถามที่สุ่มมาได้
+            updateMenu2();  // อัปเดตค่าใน menu2 หลังจากสุ่มสำเร็จ
+
+            // ทำให้ปุ่มเลือกคำถามเป็นสีแดง
+            document.querySelectorAll(".select-btn").forEach(button => {
+                const quizId = button.closest("tr").dataset.quizId;
+                if (selectedQuestions.some(q => q._id === quizId)) {
+                    button.classList.add("selected");
+                }
+            });
+
+            alert("เลือกคำถามแบบสุ่มสำเร็จ!");
+        } else {
+            alert("เกิดข้อผิดพลาดในการเลือกคำถาม");
+        }
+    } catch (error) {
+        console.error("Error fetching random questions:", error);
+        alert("ไม่สามารถเลือกคำถามแบบสุ่มได้");
+    }
+});
+
+function updateMenu2() {
+    totalScore = 0;
+    levelCount = { 1: 0, 2: 0, 3: 0 };
+    totalTime = 0;
+    totalmultipleChoice = 0;
+    totalEssay = 0;
+    totalQuestions = selectedQuestions.length;
+
+    selectedQuestions.forEach(quiz => {
+        levelCount[quiz.level]++;
+        totalScore += quiz.score || getScoreByLevel(quiz.level);
+        totalTime += quiz.timer || 0;
+
+        if (quiz.type === "multiple-choice") {
+            totalmultipleChoice++;
+        } else if (quiz.type === "essay") {
+            totalEssay++;
+        }
+    });
+
+    document.getElementById("selected-count").textContent = totalQuestions;
+    document.getElementById("level-1-count").textContent = levelCount[1];
+    document.getElementById("level-2-count").textContent = levelCount[2];
+    document.getElementById("level-3-count").textContent = levelCount[3];
+    document.getElementById("total-multiple-choice").textContent = totalmultipleChoice;
+    document.getElementById("total-essay").textContent = totalEssay;
+    document.getElementById("total-questions").textContent = totalQuestions;
+    document.getElementById("total-score").textContent = totalScore;
+    document.getElementById("total-time").textContent = `${Math.floor(totalTime / 60)} นาที ${totalTime % 60} วินาที`;
+}
 
 // สร้างดาวตกใหม่
 function createMeteor() {
