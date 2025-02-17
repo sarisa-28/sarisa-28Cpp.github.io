@@ -1,4 +1,4 @@
-<!--public/roomcocde.html-->
+<!--public/roomcocde.html--> 
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -276,7 +276,7 @@ button.selected {
             <li>เวลารวมของคำถามที่เลือก: <span id="total-time">0</span> วินาที</li>
                         <!-- ปุ่ม Reset อยู่ใต้ตัวกรอง -->
 <button id="reset-btn" class="reset-btn">❕รีเซ็ต❕</button>
-        
+              
             <li>กรอก Room Code (4 ตัว): <input type="text" id="roomcode-input" maxlength="4" pattern="\d{4}" required>
                 <button id="save-roomcode-btn">บันทึก</button>
             </li>
@@ -302,7 +302,7 @@ button.selected {
                 <option value="essay">Essay</option>
             </select>
         </div>
-        
+
         <div id="menu3">
             <h3>เลือกคำถามแบบสุ่ม</h3>
             <div id="total-questions-info">
@@ -458,6 +458,7 @@ document.getElementById("reset-btn").addEventListener("click", () => {
     totalmultipleChoice = 0;
     totalEssay = 0;
     totalQuestions = 0;
+
     
         document.getElementById("selected-count").textContent = selectedQuestions.length;
         document.getElementById("level-1-count").textContent = levelCount[1];
@@ -467,7 +468,7 @@ document.getElementById("reset-btn").addEventListener("click", () => {
         document.getElementById("total-essay").textContent = totalEssay;
         document.getElementById("total-questions").textContent = selectedQuestions.length;
         document.getElementById("total-score").textContent = totalScore;
-        document.getElementById("total-time").textContent = `${Math.floor(totalTime / 60)} นาที ${totalTime % 60} วินาที`;  
+        document.getElementById("total-time").textContent = `${Math.floor(totalTime / 60)} นาที ${totalTime % 60} วินาที`;
 
     // รีเซ็ทปุ่มทั้งหมดในตารางที่ถูกเลือก (โดยการเอาคลาส selected ออก)
     document.querySelectorAll(".select-btn").forEach(button => {
@@ -477,11 +478,11 @@ document.getElementById("reset-btn").addEventListener("click", () => {
 
         // ฟังก์ชันที่คืนค่าคะแนนตามเลเวลของคำถาม
         function getScoreByLevel(level) {
-            if (level === '1') return 1;  // เลเวล 1 มี 1 คะแนน
-            if (level === '2') return 3;  // เลเวล 2 มี 3 คะแนน
-            if (level === '3') return 5;  // เลเวล 3 มี 5 คะแนน
-            return 0;  // กรณีที่ไม่มีการกำหนดเลเวล
-        }
+    if (level.toString() === '1') return 1;
+    if (level.toString() === '2') return 3;
+    if (level.toString() === '3') return 5;
+    return 0;
+}
 
         fetchQuestions();
         // ฟังก์ชันกรองคำถามเมื่อเปลี่ยนการเลือกเลเวล
@@ -567,7 +568,6 @@ document.getElementById('save-roomcode-btn').addEventListener('click', async fun
         alert("ไม่สามารถบันทึกข้อมูลได้.");
     }
 });
-
 //เลือกคำถามแบบแรนด้อม
 document.getElementById("random-select-btn").addEventListener("click", async () => {
     const level1 = parseInt(document.getElementById("level1-count").value, 10);
@@ -671,7 +671,6 @@ async function updateTotalQuestionsInfo() {
 
 // เรียกใช้ฟังก์ชันเพื่อโหลดข้อมูลตอนเปิดหน้าเว็บ
 updateTotalQuestionsInfo();
-
 
 // สร้างดาวตกใหม่
 function createMeteor() {
