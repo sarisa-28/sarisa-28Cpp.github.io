@@ -475,6 +475,41 @@ button:hover {
             backdrop-filter: blur(10px);
             z-index: 999;
         }
+        /* แถบสถานะการเล่น */
+#progress-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+#progress-bar {
+    width: 80%;
+    height: 20px;
+    background-color: #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+    margin: 0 10px;
+}
+
+#progress {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #ff7f50, #ff4500);
+    transition: width 0.5s ease-in-out;
+}
+
+#rocket {
+    font-size: 30px;
+    transition: transform 0.5s ease-in-out;
+}
+
+#flag {
+    font-size: 30px;
+}
+
     </style>
 </head>
 <body>  
@@ -517,6 +552,15 @@ button:hover {
 
 <!-- ปรับส่วนแสดงคำถาม -->
 <div id="quiz-container" style="display: none;">
+    <!-- Progress Bar -->
+<div id="progress-container">
+    🚀 <span id="rocket">🚀</span>
+    <div id="progress-bar">
+        <div id="progress"></div>
+    </div>
+    <span id="flag">🏁</span>
+</div>
+
     <h2 id="question"></h2>
     <div id="timer">Time left: <span id="time-left">0</span> seconds</div>
     
@@ -566,6 +610,10 @@ let score = 0;
 let roomCode = '';
 let playerScore = 0;    
 
+//แสดงสถานะการเล่น
+let totalQuestions = 0; // จำนวนคำถามทั้งหมด
+
+
     // ดึงชื่อผู้ใช้จาก sessionStorage หรือ localStorage ถ้ามี
     const username = sessionStorage.getItem('username'); // หรือใช้ localStorage.getItem('username');
     if (username) {
@@ -583,6 +631,8 @@ if (roomCode) {
 
         if (roomData && Array.isArray(roomData.selectedQuestions) && roomData.selectedQuestions.length > 0) {
             quizzes = roomData.selectedQuestions;
+            totalQuestions = quizzes.length; // ดึงจำนวนคำถามทั้งหมด
+            updateProgressBar(); // อัปเดตแถบสถานะ
             document.getElementById('room-code-section').style.display = 'none';
             document.getElementById('player-info').style.display = 'block';
 
@@ -791,6 +841,7 @@ if (currentQuestionIndex < quizzes.length) {
 } else {
     endQuiz();
 }
+updateProgressBar(); // อัปเดตแถบสถานะ 🚀
 }
 
 async function savePlayerScore(name, score, username, roomCode, datePlayed, uniqueIdentifier) {
@@ -1046,6 +1097,16 @@ socket.emit('player-score', {
         alert(`Game Over! Your Score: ${score}`);
 resetQuiz();
 }
+
+//แถบสถานะเกม
+function updateProgressBar() {
+    let progressPercentage = (currentQuestionIndex / totalQuestions) * 100;
+    document.getElementById('progress').style.width = `${progressPercentage}%`;
+
+    // เคลื่อนที่ 🚀 ไปข้างหน้า
+    document.getElementById('rocket').style.transform = `translateX(${progressPercentage}%)`;
+}
+
 
 // สร้างดาวตกใหม่
 function createMeteor() {
