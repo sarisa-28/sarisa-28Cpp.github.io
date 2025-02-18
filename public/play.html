@@ -351,40 +351,46 @@ button:hover {
 }
 
 /*ตกแต่งอัตนัยและปรนัย*/
-.answers {
+.answers {  
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2 คอลัมน์ */
-    grid-template-rows: auto auto; /* 2 แถว */
-    gap: 20px; /* ระยะห่างระหว่างปุ่ม */
+    grid-template-columns: repeat(2, minmax(150px, 1fr)); /* ปรับให้แต่ละคอลัมน์ยืดหยุ่น */
+    gap: 20px;
     justify-content: center;
-    align-items: center;
+    align-items: stretch; /* ให้ปุ่มสูงเท่ากัน */
     background: linear-gradient(135deg, #0d1b2a, #1b263b);
     padding: 20px;
     border-radius: 12px;
     box-shadow: 0 0 15px rgba(173, 216, 230, 0.5);
     width: 80%;
-    max-width: 500px; /* ขยายพื้นที่สำหรับปุ่ม */
+    max-width: 700px; /* ขยายให้รองรับปุ่มใหญ่ขึ้น */
     margin: auto;
     border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .answers button {
-    width: 100px; /* ปรับให้เต็มคอลัมน์ */
-    height: 100px; /* เพิ่มความสูง */
-    padding: 20px ; /* ขยายขนาดปุ่ม */
+    width: 100%;
+    min-height: 140px; /* เพิ่มความสูงให้รองรับข้อความ */
+    padding: 20px;
     background: #444;
     border: 3px solid #444;
     color: #fff;
-    border-radius: 12px; /* ทำให้มุมโค้ง */
-    font-size: 20px;
+    border-radius: 12px;
+    font-size: 22px;
+    text-align: center;
     cursor: pointer;
     transition: background 0.3s ease, transform 0.2s;
+    word-wrap: break-word;
+    white-space: normal; /* ทำให้ข้อความขึ้นบรรทัดใหม่ */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 .answers button:hover {
     background: #ff7f50;
     border-color: #ff7f50;
-    transform: scale(1.05); /* เพิ่มเอฟเฟกต์ขยายเล็กน้อย */
+    transform: scale(1.05);
 }
 
 #open-answer {
