@@ -55,6 +55,38 @@ h1 {
     display: block;
     text-align: left;
 }
+/* อัพโหลไฟล์ */
+h2 {
+            color: #00c3ff;
+            text-shadow: 0 0 10px cyan;
+            margin-bottom: 20px;
+        }
+
+        #file-input {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid #00c3ff;
+            border-radius: 8px;
+            padding: 10px;
+            color: white;
+            cursor: pointer;
+        }
+
+        button {
+            background: #00c3ff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: black;
+            border-radius: 8px;
+            cursor: pointer;
+            box-shadow: 0 0 10px cyan;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            background: red;
+            box-shadow: 0 0 15px cyan;
+        }
 
     </style>
 </head>
@@ -74,9 +106,10 @@ h1 {
         
         <h1>👩🏼‍💻 Add Question 👨🏼‍💻</h1>
 
-                <!-- ใส่ไฟล์แอดคำถาม -->
-                <input type="file" id="file-input" accept=".json">
-                <button onclick="uploadFile()">Upload Questions</button>        
+        <!-- ใส่ไฟล์แอดคำถาม -->
+        <h2>อัพโหลดไฟล์ .json เพื่อเพิ่มคำถามในระบบ</h2>
+        <input type="file" id="file-input" accept=".json">
+        <button onclick="uploadFile()">Upload Questions</button>
 
         <!-- เลือกประเภทคำถาม -->
         <div class="question-select">
