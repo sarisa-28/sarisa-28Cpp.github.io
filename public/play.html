@@ -418,25 +418,28 @@ button:hover {
 }
 
 #submit-open-answer {
-    margin-top: 10px;
-    width: 100px; /* ปรับให้เต็มคอลัมน์ */
-    height: 100px; /* เพิ่มความสูง */
-    font-size: 18px; /* เพิ่มขนาดฟอนต์ของปุ่ม */
+    display: block; /* ทำให้ปุ่มอยู่ตรงกลาง */
+    margin: 20px auto; /* จัดกึ่งกลางอัตโนมัติและเพิ่มระยะห่าง */
+    width: 150px; /* เพิ่มความกว้าง */
+    height: 80px; /* ปรับความสูง */
+    font-size: 22px; /* เพิ่มขนาดฟอนต์ */
     font-weight: bold;
     color: #fff;
     background: linear-gradient(45deg, #6a11cb, #2575fc);
     border: none;
-    border-radius: 8px;
+    border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease-in-out;
-    box-shadow: 0 0 10px rgba(173, 216, 230, 0.8);
+    box-shadow: 0 0 15px rgba(173, 216, 230, 0.8);
+    text-align: center; /* จัดข้อความอยู่ตรงกลาง */
 }
 
 #submit-open-answer:hover {
-    background: linear-gradient(45deg, #2575fc, #6a11cb);
-    box-shadow: 0 0 15px rgba(173, 216, 230, 1);
-    transform: scale(1.05);
+    background: linear-gradient(45deg, red, darkorange);
+    box-shadow: 0 0 20px rgba(173, 216, 230, 1);
+    transform: scale(1.1);
 }
+
         /* สไตล์สำหรับ Score Popup */
         #score-popup {
             display: none;
