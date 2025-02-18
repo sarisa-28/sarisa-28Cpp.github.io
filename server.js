@@ -12,6 +12,8 @@ const moment = require('moment-timezone'); // ติดตั้ง library mome
 
 const nodemailer = require('nodemailer');
 const otpGenerator = require('otp-generator');
+const multer = require('multer');
+const fs = require('fs');
 
 const app = express();
 const server = http.createServer(app);
@@ -139,6 +141,9 @@ const transporter = nodemailer.createTransport({
         pass: 'euia rphs ftbv defg'   // กรอกรหัสผ่านหรือ app password
     }
 });
+
+// ตั้งค่าการอัปโหลดไฟล์
+const upload = multer({ dest: 'uploads/' });
 
 function sendOTP(email, otp) {
     const mailOptions = {
@@ -931,6 +936,27 @@ app.post('/random-questions', async (req, res) => {
     } catch (error) {
         console.error("Error fetching random questions:", error);
         res.status(500).json({ error: "Error fetching random questions" });
+    }
+});
+
+//แอดไฟล์คำถาม
+app.post('/upload-questions', upload.single('file'), async (req, res) => {
+    try {
+        const filePath = req.file.path;
+        const fileContent = fs.readFileSync(filePath, 'utf-8');
+        const questions = JSON.parse(fileContent); // อ่าน JSON ไฟล์
+
+        if (!Array.isArray(questions)) {
+            return res.status(400).json({ error: 'Invalid file format' });
+        }
+
+        await Quiz.insertMany(questions); // เพิ่มคำถามลง MongoDB ทีเดียว
+
+        fs.unlinkSync(filePath); // ลบไฟล์หลังจากใช้งานเสร็จ
+        res.status(200).json({ message: 'Questions uploaded successfully!' });
+    } catch (error) {
+        console.error('Error uploading questions:', error);
+        res.status(500).json({ error: 'Error uploading questions' });
     }
 });
 

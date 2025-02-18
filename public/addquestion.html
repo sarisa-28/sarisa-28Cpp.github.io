@@ -74,6 +74,10 @@ h1 {
         
         <h1>👩🏼‍💻 Add Question 👨🏼‍💻</h1>
 
+                <!-- ใส่ไฟล์แอดคำถาม -->
+                <input type="file" id="file-input" accept=".json">
+                <button onclick="uploadFile()">Upload Questions</button>        
+
         <!-- เลือกประเภทคำถาม -->
         <div class="question-select">
             <label for="question-type">Select Question Type:</label>
@@ -244,6 +248,33 @@ window.onload = () => {
         quizContainer.style.display = 'none';
     }
 };
+
+//แอดคำถามแบบใช้ไฟล์
+async function uploadFile() {
+        const fileInput = document.getElementById('file-input');
+        if (fileInput.files.length === 0) {
+            alert('Please select a file');
+            return;
+        }
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+
+        try {
+            const response = await fetch('/upload-questions', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                alert('Questions uploaded successfully!');
+            } else {
+                alert('Error uploading questions');
+            }
+        } catch (error) {
+            console.error('Upload error:', error);
+        }
+    }
 
 // สร้างดาวตกใหม่
 function createMeteor() {
