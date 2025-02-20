@@ -748,6 +748,8 @@ function displayQuiz(index) {
                 loadNextQuestion();
             }
         }, 1000);
+            // 📢 ส่งข้อมูลสถานะผู้เล่นทุกครั้งที่โหลดคำถามใหม่
+    sendPlayerProgress();
     }
 
 // นับถอยหลังเวลา
@@ -785,6 +787,8 @@ if (selectedIndex === correctIndex) {
     showSadFace(); // แสดงหน้าบึ้งเมื่อคำตอบผิด
     alert('Wrong!');
 }
+    // 📢 อัปเดตสถานะผู้เล่นหลังจากตอบคำถาม
+    sendPlayerProgress();
 showScorePopup(correctAnswerText, playerAnswerText, score);
 }
 
@@ -815,6 +819,8 @@ function checkOpenAnswer(playerAnswer, correctAnswer, level) {
 } else {
     alert('Invalid answer format');
 }
+    // 📢 อัปเดตสถานะผู้เล่นหลังจากตอบคำถาม
+    sendPlayerProgress();
     showScorePopup(correctAnswer, playerAnswer, score);
 }
 
@@ -832,7 +838,6 @@ document.getElementById('submit-open-answer').addEventListener('click', () => {
 
 });
 
-
 function loadNextQuestion() {
 currentQuestionIndex++;
 document.getElementById('overlay').style.display = 'none';
@@ -842,6 +847,17 @@ if (currentQuestionIndex < quizzes.length) {
     endQuiz();
 }
 updateProgressBar(); // อัปเดตแถบสถานะ 🚀
+}
+
+//ส่งข้อมูลผู้เล่น
+function sendPlayerProgress() {
+    socket.emit("player-progress", {
+        roomCode: roomCode,
+        playerName: playerName,
+        currentQuestion: currentQuestionIndex, 
+        totalQuestions: quizzes.length,
+        score: score
+    });
 }
 
 async function savePlayerScore(name, score, username, roomCode, datePlayed, uniqueIdentifier) {

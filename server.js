@@ -546,7 +546,8 @@ app.post('/start-game/:roomCode', async (req, res) => {
         }
 
         // รีเซ็ตคะแนนของห้องเมื่อเริ่มเกมใหม่
-        playerScores[roomCode] = {};  
+        playerScores[roomCode] = {};
+        playerProgress[roomCode] = [];  
 
         // อัพเดตสถานะว่าเกมเริ่มแล้ว
         room.gameStarted = true;
@@ -566,6 +567,7 @@ app.post('/start-game/:roomCode', async (req, res) => {
 let roomPlayers = {};  // เก็บข้อมูลผู้เล่นที่เชื่อมต่อในแต่ละห้อง
 let roomAdmins = {};   // เก็บ admin ของแต่ละห้อง
 let playerScores = {};
+let playerProgress = {};
 
 io.on('connection', (socket) => {
     console.log('A player connected');
@@ -658,6 +660,40 @@ io.on('connection', (socket) => {
         io.to(roomCode).emit('update-player-scores', playerScores[roomCode]);
     });
     
+    socket.on("player-progress", ({ roomCode, playerName, currentQuestion, totalQuestions, score }) => {
+        if (!playerProgress[roomCode]) {
+            playerProgress[roomCode] = [];
+        }
+    
+        const existingPlayer = playerProgress[roomCode].find(p => p.name === playerName);
+        if (existingPlayer) {
+            existingPlayer.currentQuestion = currentQuestion;
+            existingPlayer.score = score;
+        } else {
+            playerProgress[roomCode].push({ name: playerName, currentQuestion, totalQuestions, score });
+        }
+    
+        io.to(roomCode).emit("update-player-progress", playerProgress[roomCode]);
+    });
+    
+    socket.on("update-player-progress", async (roomCode) => {
+        try {
+            // ดึงข้อมูลของรอบปัจจุบันจากฐานข้อมูล
+            const currentRoom = await RoomCode.findOne({ roomCode });
+    
+            if (!currentRoom || !currentRoom.gameStarted) {
+                return; // ถ้ายังไม่มีเกมที่เริ่มต้น ไม่ต้องส่งข้อมูล
+            }
+    
+            // ดึงข้อมูลผู้เล่นในห้องปัจจุบัน
+            const playersInRoom = playerProgress[roomCode] || [];
+    
+            // ส่งข้อมูลไปที่ client ให้แสดงเฉพาะข้อมูลรอบปัจจุบัน
+            io.to(roomCode).emit("update-player-progress", playersInRoom);
+        } catch (error) {
+            console.error("Error fetching current game progress:", error);
+        }
+    });    
 
     socket.on('end-game', () => {
         playerScores = {}; // รีเซ็ตคะแนนเมื่อจบเกม

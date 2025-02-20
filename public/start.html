@@ -1,4 +1,4 @@
-<!--start.html--> 
+<!--start.html-->  
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -123,58 +123,6 @@
             box-shadow: 0 0 15px pink;
         }
 
-                        /* ป๊อบอัพ2 */
-                        #player-list-popup2 {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 40, 0.9);
-            color: white;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px cyan;
-            z-index: 1000;
-        }
-
-        #player-list-popup2 h3 {
-            font-size: 24px;
-            color: cyan;
-            text-shadow: 0 0 10px cyan;
-        }
-
-        #player-list-popup2 ul {
-            list-style-type: none;
-            padding: 0;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        #player-list-popup2 ul li {
-            background: rgba(255, 255, 255, 0.2);
-            margin: 5px 0;
-            padding: 10px;
-            border-radius: 5px;
-        }
-
-        /* ปุ่มend-gameในป๊อบอัพ */
-        #end-game {
-            background: linear-gradient(45deg, #ff0099, #ff6600);
-            border: none;
-            color: white;
-            padding: 15px 30px;
-            font-size: 18px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-        }
-
-        #end-game:hover {
-            transform: scale(1.1);
-            box-shadow: 0 0 15px pink;
-        }
-
         /* การเคลื่อนไหวดาวตกที่ช้าและมีเอฟเฟ็กต์ */
 @keyframes meteor-shower {
     0% {
@@ -267,7 +215,60 @@ h1 {
     color: #f4a261;
 }
 
-    
+/* ตกแต่ง container ให้ popups ดูลอยตัว */
+#popups-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 20px;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    perspective: 1000px;
+}
+
+/* ตกแต่ง popup-box ให้ดูเหมือนกระจกในอวกาศ */
+.popup-box {
+    background: rgba(0, 0, 50, 0.9);
+    color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 0 20px cyan, 0 0 40px rgba(0, 255, 255, 0.2);
+    min-width: 250px;
+    max-width: 300px;
+    transform-style: preserve-3d;
+}
+
+/* ปรับ ul ภายใน popup ให้ดูสะอาด */
+.popup-box ul {
+    list-style-type: none;
+    padding: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid cyan;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+/* ปุ่ม End Game สไตล์อวกาศ */
+#end-game {
+    background: linear-gradient(45deg, #ff0099, #ff6600);
+    border: none;
+    color: white;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 15px rgba(255, 0, 153, 0.8);
+}
+
+#end-game:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 25px rgba(255, 0, 153, 1), 0 0 40px rgba(255, 102, 0, 0.8);
+}
     </style>
 </head>
 <body>
@@ -311,13 +312,21 @@ h1 {
         <button id="start-game-in-popup">Start Game</button>
     </div>
 
-        <!-- เพิ่ม popup ใหม่สำหรับแสดงคะแนน -->
-<div id="player-list-popup2" style="display: none;">
-    <h3>Game Over - Player Scores</h3>
-    <ul id="player-score-list"></ul>
-    <button id="end-game">End Game</button>
-</div>
+<!-- Container ครอบ popup 2 และ 3 -->
+<div id="popups-container" style="display: none;">
+    <!-- Popup แสดงคะแนน -->
+    <div id="player-list-popup2" class="popup-box">
+        <h3>Game Over - Player Scores</h3>
+        <ul id="player-score-list"></ul>
+        <button id="end-game">End Game</button>
+    </div>
 
+    <!-- Popup แสดงสถานะผู้เล่น -->
+    <div id="player-list-popup3" class="popup-box">
+        <h3>📊 Player Progress & Scores</h3>
+        <ul id="player-progress-list"></ul>
+    </div>
+</div>
 
     <script src="/socket.io/socket.io.js"></script>
 
@@ -326,6 +335,7 @@ h1 {
         const roomCodeInput = document.getElementById('room-code');
         const playerListPopup = document.getElementById('player-list-popup');
         const playerListPopup2 = document.getElementById('player-list-popup2');
+        const playerListPopup3 = document.getElementById('player-list-popup2');
         const playerList = document.getElementById('player-list');
         const totalPlayersDisplay = document.getElementById('total-players');
         const roomCodeDisplay = document.getElementById('room-code-display');
@@ -382,13 +392,14 @@ h1 {
 
         // เมื่อกดปุ่ม Start Game ในป๊อบอัพ
         startGameInPopupButton.addEventListener('click', async () => {
-            const startResponse = await fetch(`/start-game/${currentRoomCode}`, { method: 'POST' });
-            if (startResponse.ok) {
-                playerListPopup.style.display = 'none';
-                playerListPopup2.style.display = 'block';
-                alert('Game has started! All players are now ready.');
-            }
-        });
+    const startResponse = await fetch(`/start-game/${currentRoomCode}`, { method: 'POST' });
+    if (startResponse.ok) {
+        playerListPopup.style.display = 'none';
+        document.getElementById('popups-container').style.display = 'flex'; // แสดง popup ทั้งสองอัน
+        alert('Game has started! All players are now ready.');
+    }
+});
+
 
 // ฟังสัญญาณคะแนนจากเซิร์ฟเวอร์
 document.addEventListener("DOMContentLoaded", function () {
@@ -425,6 +436,22 @@ document.addEventListener("DOMContentLoaded", function () {
         playerScoreList.appendChild(li);
     });
 });
+});
+
+//แสดงสถานะผู้เล่น
+const playerProgressPopup = document.getElementById("player-list-popup3");
+const playerProgressList = document.getElementById("player-progress-list");
+
+// ฟัง event จาก server ว่า Player ทำถึงข้อไหนแล้ว
+socket.on("update-player-progress", (players) => {
+    const playerProgressList = document.getElementById("player-progress-list");
+    playerProgressList.innerHTML = "";
+
+    players.forEach(player => {
+        const li = document.createElement("li");
+        li.textContent = `🚀 ${player.name} - ข้อที่ ${player.currentQuestion + 1} / ${player.totalQuestions} | คะแนน: ${player.score} คะแนน`;
+        playerProgressList.appendChild(li);
+    });
 });
 
 // เมื่อกดปุ่ม End Game
