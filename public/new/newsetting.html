@@ -1,0 +1,392 @@
+<!--public/new/setting.html-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reset Password</title>
+    <link rel="stylesheet" href="style.css">
+        <!-- เพิ่มลิงค์ Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* การตกแต่งพื้นหลังธีมอวกาศ */
+        body {
+    font-family: Arial, sans-serif;
+    background: #0b1d37;
+    color: #fff;
+    background: url('https://cdn.pixabay.com/photo/2015/08/28/11/27/space-911785_1280.jpg') no-repeat center center fixed;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    padding-top: 250px; /* เพิ่มระยะห่างสำหรับเมนูด้านบน */
+}
+        .login-container {
+    background: rgba(0, 0, 0, 0.7);
+    padding: 30px;
+    border-radius: 10px;
+    width: 300px;
+    box-shadow: 0 0 15px cyan;
+    margin-top: 20px; /* เพิ่มระยะห่างเพิ่มเติมจากเมนู */
+}
+        h2 {
+    color: #00ccff;
+    text-shadow: 2px 2px 5px rgba(0, 204, 255, 0.7);
+}
+
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #ffffff;
+        }
+        .form-group input {
+            width: 95%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            color: #fafafa;
+            border-radius: 4px;
+        }
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        label {
+            color: #fff;
+            font-size: 0.9em;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        input {
+            width: 100%;
+            padding: 10px;
+            background: #222;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1em;
+        }
+
+        input:focus {
+            border-color: #66ccff;
+            outline: none;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #66ccff;
+            border: none;
+            border-radius: 5px;
+            color: #fff;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover {
+            background: #3399cc;
+        }
+
+        .link {
+            display: block;
+            text-align: center;
+            margin-top: 15px;
+            color: #66ccff;
+            text-decoration: none;
+            font-size: 1em;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+        /* แถบเมนูข้างบนของ admin */
+         #admin-top-menu {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            top: 1%;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: gradient-animation 6s ease infinite;
+            border-bottom: 5px solid cyan;
+            box-shadow: 0 0 20px cyan;
+        }
+
+        #admin-top-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            margin: 0 15px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #admin-top-menu a:hover {
+            background-color: #ff6f61;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px cyan;
+        }
+
+                /* แถบเมนูข้างบนของplayer */
+                #player-top-menu {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: fixed;
+            top: 1%;
+            z-index: 1000;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: gradient-animation 6s ease infinite;
+            border-bottom: 5px solid cyan;
+            box-shadow: 0 0 20px cyan;
+        }
+
+        #player-top-menu a {
+            color: black;
+            text-decoration: none;
+            font-size: 20px;
+            margin: 0 15px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #player-top-menu a:hover {
+            background-color: green;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px cyan;
+        }
+
+        @keyframes gradient-animation {
+    0%, 100% {
+        background: linear-gradient(45deg, red, orangered, yellow); /* เขียวเข้มไปน้ำเงิน */
+    }
+    50% {
+        background: linear-gradient(45deg, yellow, orangered, red); /* ดำเข้มไปน้ำเงิน */
+    }
+}
+.meteor {
+    position: absolute;
+    top: -10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: meteor-shower 5s linear infinite;
+    background-color: #ffcc00;
+}
+    </style>
+</head>
+<body>
+        <!-- แถบเมนูข้างบนของadmin -->
+        <div id="admin-top-menu">
+            <a href="newstart.html"><i class="fa-solid fas fa-play fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Start</a>
+            <a href="newaddquestion.html">🤔Add Questions💭</a>
+            <a href="newroomcode.html"><i class="fas fa-key fa-solid fa-flip"  style="--fa-animation-duration: 3s; color: cyan;"></i> Set Room Code</a>  
+            <a href="newseeroom.html">🚩View Room Codes👀</a> 
+            <a href="newscores.html"><i class="fas fa-trophy fa-beat" style="color: cyan;"></i> View Scores</a>
+            <a href="newhistoryroomcode.html">👑History RoomCode🏰</a>
+            <a href="newsetting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+            <p><a href="newevaluation.html">🙇🏻 Evaluation 🙇🏻‍♀️</a>
+            <a href="/start.html"><i class="fa-solid fa-globe fa-spin" style="color: cyan;"></i>กลับไปโลกที่ 1</a>
+            <a href="/index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a></p>
+        </div>
+    <!-- แถบเมนูข้างบนของplayer -->
+    <div id="player-top-menu">
+        <a href="newplay.html"><i class="fa-solid fas fa-home fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Play Game</a>
+        <a href="newhistory.html"><i class="fas fa-history fa-beat" style="color: cyan;"></i> History</a>  
+        <a href="newsetting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+        <a href="newevaluation.html"><i class="fa-solid fa-thumbs-up fa-flip" style="--fa-animation-duration: 3s; color: cyan;"></i> Evaluation</a>
+        <a href="/play.html"><i class="fa-solid fa-globe fa-spin" style="color: cyan;"></i>กลับไปโลกที่ 1</a>
+        <a href="/index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
+    </div>
+
+    <div class="login-container" id="resetPasswordForm">
+            <!-- แสดงชื่อผู้ใช้งาน -->
+            <div id="user-welcome" style="text-align: center; font-size: 20px;">
+                <p>🔏 Reset Your Password 🔑, <span id="username-display"></span>!</p>
+            </div>
+
+    <h2>Reset Password</h2>
+    <form>
+        <div class="form-group">
+            <label for="resetType">Reset as:</label>
+            <select id="resetType" required>
+                <option value="Player">Player</option>
+                <option value="Admin">Admin</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="resetUsername">Username:</label>
+            <input type="text" id="resetUsername" placeholder="Enter your username" required>
+        </div>
+        <div class="form-group">
+            <label for="oldPassword">Old Password:</label>
+            <input type="password" id="oldPassword" placeholder="Enter old password" required>
+        </div>          
+        <div class="form-group">
+            <label for="newPassword">New Password:</label>
+            <input type="password" id="newPassword" placeholder="Enter new password" required>
+        </div>
+        <div class="form-group">
+            <label for="resetEmail">Email:</label>  <!-- เปลี่ยนจาก resetUsername เป็น resetEmail -->
+            <input type="email" id="resetEmail" placeholder="Enter your email" required>
+        </div>            
+      <!-- ปุ่ม Send OTP -->
+      <button type="button" class="btn" onclick="sendOTP()">Send OTP</button>            
+        <div class="form-group">
+            <p><label for="otpCode">OTP:</label></p>
+            <input type="text" id="otpCode" placeholder="Enter OTP sent to your Gmail" required>
+        </div>  
+
+      <!-- ปุ่ม Reset Password -->
+      <button type="button" class="btn" onclick="handlePasswordReset()">Reset Password</button>
+    <a href="#" class="link" onclick="showLoginForm()">Back to Login</a>
+</div>
+
+    <script>
+        const API_BASE_URL = "https://sarisa-28pcpp-github-io.onrender.com"; // ปรับให้ตรงกับ URL ของ API
+
+    // ดึงชื่อผู้ใช้จาก sessionStorage หรือ localStorage ถ้ามี
+    const username = sessionStorage.getItem('username'); // หรือใช้ localStorage.getItem('username');
+    if (username) {
+        document.getElementById('username-display').innerText = username;
+    }
+    
+    async function handlePasswordReset() {
+    const username = document.getElementById('resetUsername').value;
+    const oldPassword = document.getElementById('oldPassword').value;
+    const newPassword = document.getElementById('newPassword').value;
+    const email = document.getElementById('resetEmail').value
+    const otpCode = document.getElementById('otpCode').value;
+    const type = document.getElementById('resetType').value;  // ดึงค่า type
+
+    if (!username || !oldPassword || !newPassword || !email || !otpCode || !type) {
+        alert('Please fill in all fields: type, username, oldPassword, newPassword, and OTP.');
+        return;
+    }
+    // ตรวจสอบว่าผู้ใช้ที่ล็อกอินอยู่เป็นผู้ที่ต้องการเปลี่ยนรหัสผ่าน
+    const resetUsername = sessionStorage.getItem('username');
+    if (resetUsername !== username) {
+        alert("You can only reset the password for your own account!");
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/reset-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ type, username, oldPassword, newPassword,email, otpCode }),
+        });
+
+        if (response.ok) {
+            alert('Password reset successful!');
+            showLoginForm();
+        } else {
+            const errorText = await response.text();
+            alert(`Failed to reset password: ${errorText}`);
+        }
+    } catch (error) {
+        console.error('Error during password reset:', error);
+        alert('An error occurred during password reset. Please try again.');
+    }
+}
+
+async function sendOTP() {
+    const email = document.getElementById('resetEmail').value;  // รับ email จากฟอร์ม
+    const username = document.getElementById('resetUsername').value;  // รับ username จากฟอร์ม
+    const type = document.getElementById('resetType').value;  // ดึงค่า type
+
+    if (!email || !username || !type) {
+        alert('Please enter your email and username to receive the OTP.');
+        return;
+    }
+
+    try {
+        const response = await fetch(`${API_BASE_URL}/send-otp`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email, username, type }),  // ส่ง email และ username ไปด้วย
+        });
+
+        if (response.ok) {
+            alert('OTP has been sent to your email.');
+        } else {
+            const errorText = await response.text();
+            alert(`Failed to send OTP: ${errorText}`);
+        }
+    } catch (error) {
+        console.error('Error during OTP sending:', error);
+        alert('An error occurred while sending OTP. Please try again.');
+    }
+}
+
+        function showLoginForm() {
+            window.location.href = "play.html"; // เปลี่ยนไปที่หน้า Login
+        }
+
+//แบ่งแยกเมนูระหว่าง Admin และ Player
+var loginType = localStorage.getItem("loginType"); // ดึงค่าจาก localStorage
+console.log("Login type: " + loginType);  // เช็คค่าของ loginType
+localStorage.setItem("loginType", loginType);
+
+window.onload = function() {
+    var admintopMenu = document.getElementById("admin-top-menu");
+    var playertopMenu = document.getElementById("player-top-menu");
+
+    // ตรวจสอบค่า loginType ก่อนแสดงเมนู
+    if (loginType === "admin") {
+        admintopMenu.style.display = "block";
+        playertopMenu.style.display = "none";
+    } else if (loginType === "player") {
+        admintopMenu.style.display = "none";
+        playertopMenu.style.display = "block";
+    } else {
+        // กรณี loginType ไม่มีค่าหรือไม่ถูกต้อง
+        console.log("No login type found");
+    }
+}
+                // สร้างดาวตกใหม่
+                function createMeteor() {
+            const meteor = document.createElement('div');
+            meteor.classList.add('meteor');
+            document.body.appendChild(meteor);
+
+            meteor.style.left = `${Math.random() * 100}vw`;
+            meteor.style.animationDuration = `${Math.random() * 5 + 5}s`;
+
+            meteor.style.width = `${Math.random() * 3 + 4}px`;
+            meteor.style.height = `${Math.random() * 3 + 4}px`;
+            meteor.style.opacity = Math.random() * 0.5 + 0.5;
+
+            setTimeout(() => {
+                meteor.remove();
+            }, (Math.random() * 5 + 5) * 1000);
+        }
+
+        setInterval(createMeteor, 500);
+    </script>
+</body>
+</html>
