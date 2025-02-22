@@ -19,7 +19,7 @@ h1, h2 {
 /* ปรับรูปแบบเมนูให้เหมาะสมกับธีมอวกาศ */
 #menu {
     position: fixed;
-    top: 10%;
+    top: 2%;
     right: 0;
     background-color: rgba(0, 0, 0, 0.8);
     padding: 20px;
