@@ -259,7 +259,7 @@
 
       <!-- ปุ่ม Reset Password -->
       <button type="button" class="btn" onclick="handlePasswordReset()">Reset Password</button>
-    <a href="#" class="link" onclick="showLoginForm()">Back to Login</a>
+    <a href="#" class="link" onclick="showLoginForm2()">Back to Login</a>
 </div>
 
     <script>
@@ -344,7 +344,10 @@ async function sendOTP() {
 }
 
         function showLoginForm() {
-            window.location.href = "/new/newsetting.html"; // เปลี่ยนไปที่หน้า Login
+            window.location.href = "/new/newsetting.html"; 
+        }
+        function showLoginForm2() {
+            window.location.href = "/index.html"; // เปลี่ยนไปที่หน้า Login
         }
 
 //แบ่งแยกเมนูระหว่าง Admin และ Player
