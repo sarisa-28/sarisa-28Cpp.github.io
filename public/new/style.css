@@ -23,7 +23,7 @@ h1, h2 {
     right: 0;
     background-color: rgba(0, 0, 0, 0.8);
     padding: 20px;
-    box-shadow: 0 0 15px cyan;
+    box-shadow: 0 0 15px orange;
     width: 250px;
     display: flex;
     flex-direction: column;
@@ -49,7 +49,7 @@ h1, h2 {
 #menu a:hover {
     background-color: green;
     transform: scale(1.1);
-    box-shadow: 0 0 15px cyan;
+    box-shadow: 0 0 15px darkblue;
 }
 @keyframes gradient-animation {
     0%, 100% {
@@ -227,7 +227,7 @@ h1, h2 {
 #add-question-form {
     background: linear-gradient(135deg, #3a3a3a, #0b0b0b); /* พื้นหลังแบบไล่สี */
     border: 2px solid #444;
-    box-shadow: 0 0 15px cyan; /* เงาแบบลึกลับ */
+    box-shadow: 0 0 15px orange; /* เงาแบบลึกลับ */
 }
 
 /* อนิเมชั่นสำหรับฟอร์ม */
