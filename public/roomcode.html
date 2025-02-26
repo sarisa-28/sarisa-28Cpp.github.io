@@ -328,6 +328,7 @@ button.selected {
                     <th>Level</th>
                     <th>Type</th>
                     <th>Question</th>
+                    <th>คำตอบ/ตัวเลือกที่ถูกต้อง</th>
                     <th>ลบคำถามออกจากระบบ</th>
                     <th>เลือกคำถาม</th>
                 </tr>
@@ -381,6 +382,7 @@ button.selected {
     <td>${quiz.level}</td>
     <td>${quiz.type}</td>
     <td>${quiz.question}</td>
+    <td>${quiz.correct}</td>
     <td><button class="delete-btn" data-id="${quiz._id}">ลบคำถามนี้</button></td>
     <td><button class="select-btn" data-score="${quiz.score || getScoreByLevel(quiz.level)}" data-timer="${quiz.timer}">เลือกคำถาม</button></td>
 `;
