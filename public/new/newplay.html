@@ -794,9 +794,9 @@ showAnsPopup(selectedIndex, playerAnswerText);
 if (selectedIndex === correctIndex) {
     let points = level === 1 ? 1 : level === 2 ? 3 : 5;
     score += points;
-    alert(`ได้รับคำตอบแล้ว`);
+    alert(`ได้รับคำตอบแล้ว!`);
 } else {
-    alert('ได้รับคำตอบแล้ว');
+    alert('ได้รับคำตอบแล้ว!');
 }
 setTimeout(() => {
         sendPlayerProgress2();
@@ -824,9 +824,9 @@ function checkOpenAnswer(playerAnswer, correctAnswer, level) {
     if (sanitizedPlayerAnswer === sanitizedCorrectAnswer) {
         let points = level === 1 ? 1 : level === 2 ? 3 : 5;
         score += points;
-        alert(`ได้รับคำตอบแล้ว`);
+        alert(`ได้รับคำตอบแล้ว!`);
     } else {
-        alert('ได้รับคำตอบแล้ว');
+        alert('ได้รับคำตอบแล้ว!');
     }
 } else {
     alert('Invalid answer format');
