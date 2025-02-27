@@ -1,4 +1,4 @@
-<!--public/new/start.html-->  
+<!--public/new/newstart.html-->  
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -327,6 +327,7 @@ h1 {
     <div id="player-list-popup2" class="popup-box">
         <h3>Game Over - Player Scores</h3>
         <ul id="player-score-list"></ul>
+        <p>Total Scores: <span id="total-score-count">0</span></p>
         <button id="end-game">End Game</button>
     </div>
 
@@ -334,6 +335,7 @@ h1 {
     <div id="player-list-popup3" class="popup-box">
         <h3>📊 Player Progress & Scores</h3>
         <ul id="player-progress-list"></ul>
+        <p>Total Progress: <span id="total-progress-count">0</span></p>
     </div>
 </div>
 
@@ -444,7 +446,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let rankOffset = 0;
 
     players.forEach((player) => {
-        if (player.score !== previousScore) {
+        if (player.score !== previousScore) {z
             currentRank += rankOffset;
             rankOffset = 1;
         } else {
@@ -582,6 +584,32 @@ startGameButton.addEventListener('click', () => {
 overlay.addEventListener('click', () => {
     hidePopup();
 });
+
+// ฟังก์ชันอัปเดตจำนวนรายการใน player-score-list และ player-progress-list
+function updatePlayerCounts() {
+    const scoreList = document.getElementById("player-score-list");
+    const progressList = document.getElementById("player-progress-list");
+
+    const scoreCount = scoreList ? scoreList.children.length : 0;
+    const progressCount = progressList ? progressList.children.length : 0;
+
+    document.getElementById("total-score-count").textContent = scoreCount;
+    document.getElementById("total-progress-count").textContent = progressCount;
+}
+
+// เรียกใช้ฟังก์ชันเมื่อมีการเปลี่ยนแปลงในลิสต์
+const observer = new MutationObserver(updatePlayerCounts);
+
+const scoreList = document.getElementById("player-score-list");
+const progressList = document.getElementById("player-progress-list");
+
+if (scoreList) {
+    observer.observe(scoreList, { childList: true });
+}
+
+if (progressList) {
+    observer.observe(progressList, { childList: true });
+}
 
                 // สร้างดาวตกใหม่
                 function createMeteor() {
