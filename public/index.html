@@ -1,4 +1,4 @@
-<!--index.html-->
+<!--public/index.html-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -112,19 +112,25 @@
 .form-link:hover {
     transform: scale(1.1);
 }
+.login-container h3{
+    color: darkblue;
+}
     </style>
 </head>
 <body>
-        <!-- QR Code ไว้มุมบนซ้าย -->
-        <div class="qr-container">
-            <h2>👇🏼 แสกนQRcode 👇🏼</h2>
-            <img src="image/QRcode.png" alt="QR Code">
-            <h2>❤️‍🔥 เพื่อดูคู่มือการใช้งานเว็บไซต์ 📲</h2>
-            <p><h2> หรือ </h2></p>
-            <a href="https://www.canva.com/design/DAGev--m8So/dOhvxPSigvaOzJyk9vEclQ/edit?utm_content=DAGev--m8So&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" class="form-link">คลิกที่นี่เพื่อดูคู่มือการใช้งาน</a>
-        </div>
-        
+
+    <!-- QR Code ไว้มุมบนซ้าย -->
+    <div class="qr-container">
+        <h2>👇🏼 แสกนQRcode 👇🏼</h2>
+        <img src="image/QRcode.png" alt="QR Code">
+        <h2>❤️‍🔥 เพื่อดูคู่มือการใช้งานเว็บไซต์ 📲</h2>
+        <p><h2> หรือ </h2></p>
+        <a href="https://www.canva.com/design/DAGev--m8So/dOhvxPSigvaOzJyk9vEclQ/edit?utm_content=DAGev--m8So&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton" target="_blank" class="form-link">คลิกที่นี่เพื่อดูคู่มือการใช้งาน</a>
+    </div>
+    
     <div class="login-container">
+        <h2>Welcome To</h2>
+        <h3>Website for Evaluating Programming and Algorithmic Expertise Using C++</h3>
         <h2>🌏 Login 🗾</h2>
         <form id="loginForm">
             <div class="form-group">
@@ -211,7 +217,7 @@
     </div>
     
     <script>
-    const API_BASE_URL = "https://sarisa-28pcpp-github-io.onrender.com";
+    const API_BASE_URL = "http://localhost:3000";
 
     
     async function handleLogin() {
@@ -268,7 +274,7 @@ async function handleRegister() {
     }
 
     try {
-        const response = await fetch(`https://sarisa-28pcpp-github-io.onrender.com/register`, {
+        const response = await fetch(`http://localhost:3000/register`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
