@@ -251,6 +251,10 @@ body {
       
         <a href="https://forms.gle/Z7t72cik5sGJ688r5" target="_blank" class="form-link">คลิกที่นี่เพื่อทำแบบประเมิน</a>
     </div>
+
+    <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+    <audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
+    
     <script>
 window.onload = function() {
     var admintopMenu = document.getElementById("admin-top-menu");
@@ -279,6 +283,35 @@ window.onload = function() {
     }
 };
 
+// เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+
+    document.querySelectorAll("#admin-top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
+
+    document.querySelectorAll("#player-top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
             // สร้างดาวตกใหม่
                 function createMeteor() {
             const meteor = document.createElement('div');

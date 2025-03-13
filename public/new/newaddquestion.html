@@ -121,7 +121,7 @@ h2 {
         <!-- ใส่ไฟล์แอดคำถาม -->
          <h2>อัพโหลดไฟล์ .json เพื่อเพิ่มคำถามในระบบ</h2>
         <input type="file" id="file-input" accept=".json">
-        <button onclick="uploadFile()">Upload Questions</button>
+        <button onclick="uploadFile()" id="uploadFile">Upload Questions</button>
 
         <!-- เลือกประเภทคำถาม -->
         <div class="question-select">
@@ -164,7 +164,7 @@ h2 {
             <option value="3">Level 3</option>
         </select>
         
-        <button type="submit">Add Question</button>
+        <button type="submit" id="submit">Add Question</button>
     </form>
 
     <!-- ฟอร์มสำหรับคำถามแบบอัตนัย -->
@@ -186,10 +186,13 @@ h2 {
             <option value="3">Level 3</option>
         </select>
         
-        <button type="submit">Add Question</button>
+        <button type="submit" id="submit2">Add Question</button>
     </form>
     
     <a href="/new/newstart.html" style="color:cyan;">Back To Home</a>
+
+    <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+    <audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
     
     <script>
         // ฟังก์ชันในการสลับฟอร์มระหว่างคำถามแบบปรนัยและอัตนัย
@@ -320,6 +323,31 @@ async function uploadFile() {
             console.error('Upload error:', error);
         }
     }
+
+    // เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+
+    document.querySelectorAll("#menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
+
+    const oSound = document.getElementById("o-sound");
+
+    document.getElementById("submit").addEventListener("click", () => playSound(oSound));
+    document.getElementById("submit2").addEventListener("click", () => playSound(oSound));
+    document.getElementById("uploadFile").addEventListener("click", () => playSound(oSound));
 
 // สร้างดาวตกใหม่
 function createMeteor() {

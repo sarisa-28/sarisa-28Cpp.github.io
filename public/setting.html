@@ -244,16 +244,19 @@
             <input type="email" id="resetEmail" placeholder="Enter your email" required>
         </div>            
       <!-- ปุ่ม Send OTP -->
-      <button type="button" class="btn" onclick="sendOTP()">Send OTP</button>            
+      <button type="button" id="otp" class="btn" onclick="sendOTP()">Send OTP</button>            
         <div class="form-group">
             <p><label for="otpCode">OTP:</label></p>
             <input type="text" id="otpCode" placeholder="Enter OTP sent to your Gmail" required>
         </div>  
 
       <!-- ปุ่ม Reset Password -->
-      <button type="button" class="btn" onclick="handlePasswordReset()">Reset Password</button>
-    <a href="#" class="link" onclick="showLoginForm()">Back to Login</a>
+      <button type="button" id="reset" class="btn" onclick="handlePasswordReset()">Reset Password</button>
+    <a href="#" class="link" onclick="showLoginForm2()">Back to Login</a>
 </div>
+
+<audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+<audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
 
     <script>
         const API_BASE_URL = "https://sarisa-28pcpp-github-io.onrender.com"; // ปรับให้ตรงกับ URL ของ API
@@ -339,6 +342,10 @@ async function sendOTP() {
         function showLoginForm() {
             window.location.href = "setting.html"; // เปลี่ยนไปที่หน้า Login
         }
+        function showLoginForm2() {
+            window.location.href = "index.html"; // เปลี่ยนไปที่หน้า Login
+        }
+
 
 //แบ่งแยกเมนูระหว่าง Admin และ Player
 var loginType = localStorage.getItem("loginType"); // ดึงค่าจาก localStorage
@@ -361,6 +368,41 @@ window.onload = function() {
         console.log("No login type found");
     }
 }
+
+// เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+
+    document.querySelectorAll("#admin-top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
+
+    document.querySelectorAll("#player-top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
+    
+    const oSound = document.getElementById("o-sound");
+
+    document.getElementById("otp").addEventListener("click", () => playSound(oSound));
+    document.getElementById("reset").addEventListener("click", () => playSound(oSound));
                 // สร้างดาวตกใหม่
                 function createMeteor() {
             const meteor = document.createElement('div');

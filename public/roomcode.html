@@ -340,6 +340,9 @@ button.selected {
                 
     </div>
     <div id="meteor-background"></div>
+    <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+    <audio id="h-sound" src="sounds/h.mp3" preload="auto"></audio>
+    <audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
     <script>
         const socket = io();
@@ -383,8 +386,8 @@ button.selected {
     <td>${quiz.type}</td>
     <td>${quiz.question}</td>
     <td>${quiz.correct}</td>
-    <td><button class="delete-btn" data-id="${quiz._id}">ลบคำถามนี้</button></td>
-    <td><button class="select-btn" data-score="${quiz.score || getScoreByLevel(quiz.level)}" data-timer="${quiz.timer}">เลือกคำถาม</button></td>
+    <td><button class="delete-btn" id="delete-btn" data-id="${quiz._id}">ลบคำถามนี้</button></td>
+    <td><button class="select-btn" id="select-btn" data-score="${quiz.score || getScoreByLevel(quiz.level)}" data-timer="${quiz.timer}">เลือกคำถาม</button></td>
 `;
             tableBody.appendChild(row);
         });
@@ -675,6 +678,47 @@ async function updateTotalQuestionsInfo() {
 // เรียกใช้ฟังก์ชันเพื่อโหลดข้อมูลตอนเปิดหน้าเว็บ
 updateTotalQuestionsInfo();
 
+// เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+
+    document.querySelectorAll("#top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
+    
+    const oSound = document.getElementById("o-sound");
+    const hSound = document.getElementById("h-sound");
+
+    document.getElementById("random-select-btn").addEventListener("click", () => playSound(oSound));
+    document.getElementById("reset-btn").addEventListener("click", () => playSound(oSound));
+    document.getElementById("save-roomcode-btn").addEventListener("click", () => playSound(oSound));
+    
+// ฟังก์ชันเล่นเสียง
+function playOSound() {
+    if (oSound) {
+        oSound.pause();
+        oSound.currentTime = 0;
+        oSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hSound:", err));
+    }
+}
+
+// เพิ่ม Event Listener ให้ปุ่ม "ลบคำถาม" และ "เลือกคำถาม"
+document.addEventListener("click", (event) => {
+    if (event.target.classList.contains("delete-btn") || event.target.classList.contains("select-btn")) {
+        playOSound();
+    }
+});
 // สร้างดาวตกใหม่
 function createMeteor() {
     const meteor = document.createElement('div');

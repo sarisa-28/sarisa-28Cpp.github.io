@@ -170,6 +170,9 @@
         <p style="text-align: center;">Select a room code to see details.</p>
     </div>
 
+    <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+    <audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
+
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const roomCodesContainer = document.getElementById('room-codes');
@@ -185,8 +188,8 @@
                         roomDiv.classList.add('room-code');
                         roomDiv.textContent = `Room Code: ${room.roomCode}`;
 
-                        // เพิ่มปุ่มลบสำหรับแต่ละ Room Code
-                        const deleteBtn = document.createElement('button');
+// เพิ่มปุ่มลบสำหรับแต่ละ Room Code
+const deleteBtn = document.createElement('button');
                         deleteBtn.textContent = 'Delete';
                         deleteBtn.style.backgroundColor = 'red';
                         deleteBtn.style.color = 'white';
@@ -199,7 +202,12 @@
                         });
 
                         roomDiv.appendChild(deleteBtn);
-                        roomDiv.addEventListener('click', () => fetchRoomDetails(room.roomCode));
+                        roomDiv.addEventListener('click', () => {
+                        // เล่นเสียงเมื่อคลิก Room Code
+                        const oSound = document.getElementById('o-sound');
+                        playSound(oSound);
+                        fetchRoomDetails(room.roomCode);
+                    });
                         roomCodesContainer.appendChild(roomDiv);
                     });
                 })
@@ -265,6 +273,25 @@
                 });
             }
         });
+
+        // เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+
+    document.querySelectorAll("#top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
 
         // สร้างดาวตกใหม่
         function createMeteor() {

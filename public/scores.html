@@ -165,6 +165,9 @@
 
     <button id="back-button">Back To Home</button>
 
+    <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+    <audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
+    
     <script>
         const username = sessionStorage.getItem('username');
         if (username) {
@@ -282,6 +285,25 @@ async function loadScores() {
 document.getElementById('username-search').addEventListener('input', filterScores);
 document.getElementById('roomcode-search').addEventListener('input', filterScores);
 document.getElementById('date-search').addEventListener('input', filterScores); // เพิ่มการฟังเหตุการณ์การค้นหาจากวันที่
+
+// เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+
+    document.querySelectorAll("#top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
 
         // สร้างดาวตก
         function createMeteor() {

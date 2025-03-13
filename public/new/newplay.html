@@ -603,6 +603,15 @@ button:hover {
 <div id="sad-face">
     <span>😡</span>
 </div>
+
+<!-- เอฟเฟกต์เสียง -->
+<audio id="correct-sound" src="sounds/Yes.mp3" preload="auto"></audio>
+<audio id="wrong-sound" src="sounds/No.mp3" preload="auto"></audio>
+<audio id="yahoo-sound" src="sounds/yahoo.mp3" preload="auto"></audio>
+<audio id="c-sound" src="sounds/c.mp3" preload="auto"></audio>
+<audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+<audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
+
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -794,9 +803,9 @@ showAnsPopup(selectedIndex, playerAnswerText);
 if (selectedIndex === correctIndex) {
     let points = level === 1 ? 1 : level === 2 ? 3 : 5;
     score += points;
-    alert(`ได้รับคำตอบแล้ว!`);
+    alert(`ได้รับคำตอบแล้ว`);
 } else {
-    alert('ได้รับคำตอบแล้ว!');
+    alert('ได้รับคำตอบแล้ว');
 }
 setTimeout(() => {
         sendPlayerProgress2();
@@ -824,9 +833,9 @@ function checkOpenAnswer(playerAnswer, correctAnswer, level) {
     if (sanitizedPlayerAnswer === sanitizedCorrectAnswer) {
         let points = level === 1 ? 1 : level === 2 ? 3 : 5;
         score += points;
-        alert(`ได้รับคำตอบแล้ว!`);
+        alert(`ได้รับคำตอบแล้ว`);
     } else {
-        alert('ได้รับคำตอบแล้ว!');
+        alert('ได้รับคำตอบแล้ว');
     }
 } else {
     alert('Invalid answer format');
@@ -973,10 +982,40 @@ function showScorePopup(correct, player, score) {
     const popup = document.getElementById('score-popup');
     popup.style.display = 'block';
 
+    // ตรวจสอบว่าคำตอบของผู้เล่นถูกต้องหรือไม่
+    const correctAnswerStr = String(correct).trim().toLowerCase();
+    const playerAnswerStr = String(player).trim().toLowerCase();
+
+    // ลบข้อความเก่าทั้งหมดก่อนเพิ่มใหม่
+    const oldResultText = popup.querySelector(".result-text");
+        if (oldResultText) {
+            oldResultText.remove();
+        }
+
+    let resultText = document.createElement("p");
+    resultText.classList.add("result-text"); // กำหนดคลาสเพื่อลบออกในรอบถัดไป
+    resultText.style.fontSize = "30px"; // ปรับขนาดข้อความ
+    resultText.style.fontWeight = "bold";
+
+    if (playerAnswerStr === correctAnswerStr) {
+        resultText.innerText = "✅ ตอบถูก! ✅ ";
+        resultText.style.color = "limegreen"; // ใช้สีเขียวสำหรับคำตอบถูก
+        launchConfetti(); // แสดงพลุถ้าตอบถูก
+        playSound(correctSound);
+    } else {
+        resultText.innerText = "❌ ตอบผิด! ❌";
+        resultText.style.color = "red"; // ใช้สีแดงสำหรับคำตอบผิด
+        showSadFace(); // แสดงหน้าบึ้งถ้าตอบผิด
+        playSound(wrongSound);
+    }
+
+    // เพิ่มข้อความ "ตอบถูก/ผิด" ลงไปใน popup
+    popup.appendChild(resultText);
+
     setTimeout(() => {
         popup.style.display = 'none';
         loadNextQuestion();
-    }, 5000); // แสดงผล 5 วินาที แล้วโหลดคำถามถัดไป
+    }, 10000); // แสดงผล 10 วินาที แล้วโหลดคำถามถัดไป
 }
 
 
@@ -1020,6 +1059,7 @@ setTimeout(() => {
 
 // แสดงพลุเมื่อจบคำถาม จนกว่าผู้ใช้จะกดปุ่ม OK
 function showFinalCelebration() {
+    playSound(yahooSound);
     // สร้าง interval เพื่อให้พลุทำงานตลอดเวลา
     const confettiInterval = setInterval(launchConfetti, 500);
 
@@ -1152,6 +1192,41 @@ function updateProgressBar() {
     document.getElementById('rocket').style.transform = `translateX(${progressPercentage}%)`;
 }
 
+// เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+    
+    document.querySelectorAll("#menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
+
+const correctSound = document.getElementById("correct-sound");
+const wrongSound = document.getElementById("wrong-sound");
+const yahooSound = document.getElementById("yahoo-sound");
+const cSound = document.getElementById("c-sound");
+const oSound = document.getElementById("o-sound");
+
+//เสียงปุ่มปกติ
+document.getElementById("submit-room-code").addEventListener("click", () => playSound(oSound));
+document.getElementById("start-quiz").addEventListener("click", () => playSound(oSound));
+
+//เสียงในเกม
+document.getElementById("option-0").addEventListener("click", () => playSound(cSound));
+document.getElementById("option-1").addEventListener("click", () => playSound(cSound));
+document.getElementById("option-2").addEventListener("click", () => playSound(cSound));
+document.getElementById("option-3").addEventListener("click", () => playSound(cSound));
+document.getElementById("submit-open-answer").addEventListener("click", () => playSound(cSound));
 
 // สร้างดาวตกใหม่
 function createMeteor() {

@@ -301,8 +301,11 @@ h1 {
             <p><strong>Room Code:</strong> <span id="modal-room-code"></span></p>
             <p><strong>Date Played:</strong> <span id="modal-date"></span></p>
             <ul id="modal-players"></ul>
-            <button class="close-btn" onclick="closeModal()">Close</button>
+            <button class="close-btn" id="close-btn" onclick="closeModal()">Close</button>
         </div>
+
+        <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+        <audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
         
         <script>
             async function fetchHistory() {
@@ -328,6 +331,7 @@ h1 {
                 }
             }
             function openModal(history) {
+                playSound(oSound);
                 document.getElementById('overlay').style.display = 'block';
                 document.getElementById('modal-room-code').innerText = history.roomCode;
                 document.getElementById('modal-date').innerText = new Date(history.datePlayed).toLocaleString();
@@ -358,6 +362,30 @@ const searchHistoryByRoomCode = () => {
 };
 
 document.getElementById('search-btn-history').addEventListener('click', searchHistoryByRoomCode);
+
+// เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+
+    document.querySelectorAll("#top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
+    
+    const oSound = document.getElementById("o-sound");
+
+    document.getElementById("search-btn-history").addEventListener("click", () => playSound(oSound));
+    document.getElementById("close-btn").addEventListener("click", () => playSound(oSound));
 
             // สร้างดาวตกใหม่
             function createMeteor() {

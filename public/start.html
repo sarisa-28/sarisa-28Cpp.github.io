@@ -330,6 +330,9 @@ h1 {
     </div>
 </div>
 
+<audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+<audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
+
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
@@ -586,6 +589,31 @@ if (scoreList) {
 if (progressList) {
     observer.observe(progressList, { childList: true });
 }
+
+// เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+
+    document.querySelectorAll("#top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
+    
+    const oSound = document.getElementById("o-sound");
+
+    document.getElementById("start-game").addEventListener("click", () => playSound(oSound));
+    document.getElementById("start-game-in-popup").addEventListener("click", () => playSound(oSound));
+    document.getElementById("end-game").addEventListener("click", () => playSound(oSound));
 
                 // สร้างดาวตกใหม่
                 function createMeteor() {

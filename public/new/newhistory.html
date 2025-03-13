@@ -365,6 +365,10 @@ h2 {
         </div>
     </div>
 
+    <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+    <audio id="h-sound" src="sounds/h.mp3" preload="auto"></audio>
+    <audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
+
     <script>
         const username = sessionStorage.getItem('username');
         if (username) {
@@ -470,6 +474,30 @@ const searchPuzzleByRoomCode = () => {
 };
 
 document.getElementById('search-btn').addEventListener('click', searchPuzzleByRoomCode);
+
+// เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+    const oSound = document.getElementById("o-sound");
+    const hSound = document.getElementById("h-sound");
+
+    document.getElementById("search-btn").addEventListener("click", () => playSound(oSound));
+    document.getElementById("puzzle-container").addEventListener("click", () => playSound(oSound));
+
+    document.querySelectorAll("#top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
 
                         // สร้างดาวตกใหม่
                         function createMeteor() {
