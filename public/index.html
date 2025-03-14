@@ -148,7 +148,7 @@
                 <label for="password">Password:</label>
                 <input type="password" id="password" placeholder="Enter your password" required>
             </div>
-            <button type="button" class="btn" onclick="handleLogin()">Login</button>
+            <button type="button" class="btn" id="login" onclick="handleLogin()">Login</button>
         </form>
         <a href="#" class="link" onclick="showRegisterForm()">Create Account</a>
         <a href="#" class="link" onclick="showResetPasswordForm()">Forgot Password?</a>
@@ -178,7 +178,7 @@
                 <label for="registerPassword">Password:</label>
                 <input type="password" id="registerPassword" placeholder="Enter your password" required>
             </div>
-            <button type="button" class="btn" onclick="handleRegister()">Register</button>
+            <button type="button" class="btn" id="register" onclick="handleRegister()">Register</button>
         </form>
         <a href="#" class="link" onclick="showLoginForm()">Back to Login</a>
     </div>
@@ -201,7 +201,7 @@
                 <label for="resetEmail">Email:</label>  
                 <input type="email" id="resetEmail" placeholder="Enter your email" required>
             </div>            
-          <p><button type="button" class="btn" onclick="sendOTP()">Send OTP</button></p>            
+          <p><button type="button" class="btn" id="otp" onclick="sendOTP()">Send OTP</button></p>            
             
           <div class="form-group" id="resetPasswordBtn" style="display: none;">
                 <label for="otpCode">OTP:</label>
@@ -211,11 +211,14 @@
                 <label for="newPassword">New Password:</label>
                 <input type="password" id="newPassword" placeholder="Enter new password" required>
             </div>
-                <button type="button" class="btn" onclick="handlePasswordReset()">Reset Password</button>
+                <button type="button" class="btn" id="reset" onclick="handlePasswordReset()">Reset Password</button>
 
         <a href="#" class="link" onclick="showLoginForm()">Back to Login</a>
     </div>
     
+    <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+    <audio id="background-music" src="sounds/index.mp3" autoplay loop></audio>
+
     <script>
     const API_BASE_URL = "https://sarisa-28pcpp-github-io.onrender.com";
 
@@ -380,6 +383,38 @@ function showResetPasswordForm() {
     document.getElementById('loginForm').parentNode.style.display = 'none';
     document.getElementById('resetPasswordForm').style.display = 'block';
 }
+
+// เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+
+const oSound = document.getElementById("o-sound");
+
+//เสียง
+document.getElementById("login").addEventListener("click", () => playSound(oSound));
+document.getElementById("register").addEventListener("click", () => playSound(oSound));
+document.getElementById("otp").addEventListener("click", () => playSound(oSound));
+document.getElementById("reset").addEventListener("click", () => playSound(oSound));
+document.addEventListener("DOMContentLoaded", function() {
+    const music = document.getElementById("background-music");
+
+    // ลองเล่นเพลงเมื่อโหลดหน้าเว็บ (ถ้าบราวเซอร์ไม่บล็อก)
+    music.play().catch(error => {
+        console.warn("Autoplay ถูกบล็อก! กำลังรอการโต้ตอบจากผู้ใช้...");
+    });
+
+    // ถ้าโดนบล็อก ให้เล่นใหม่เมื่อมีการโต้ตอบกับหน้าเว็บ
+    document.addEventListener("click", function() {
+        if (music.paused) {
+            music.play();
+        }
+    });
+});
+
 
 // สร้างดาวตกใหม่
 function createMeteor() {

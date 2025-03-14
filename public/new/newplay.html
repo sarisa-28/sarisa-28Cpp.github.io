@@ -611,6 +611,7 @@ button:hover {
 <audio id="c-sound" src="sounds/c.mp3" preload="auto"></audio>
 <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
 <audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
+<audio id="background-music" src="sounds/start.mp3" autoplay loop></audio>
 
 <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
 
@@ -1059,6 +1060,11 @@ setTimeout(() => {
 
 // แสดงพลุเมื่อจบคำถาม จนกว่าผู้ใช้จะกดปุ่ม OK
 function showFinalCelebration() {
+    const music = document.getElementById("background-music");
+    music.pause(); // หยุดเพลงปัจจุบัน
+    music.src = "sounds/end.mp3"; // เปลี่ยนเป็นเพลงจบเกม
+    music.play().catch(err => console.warn("ไม่สามารถเล่น end.mp3:", err));
+
     playSound(yahooSound);
     // สร้าง interval เพื่อให้พลุทำงานตลอดเวลา
     const confettiInterval = setInterval(launchConfetti, 500);
@@ -1227,6 +1233,25 @@ document.getElementById("option-1").addEventListener("click", () => playSound(cS
 document.getElementById("option-2").addEventListener("click", () => playSound(cSound));
 document.getElementById("option-3").addEventListener("click", () => playSound(cSound));
 document.getElementById("submit-open-answer").addEventListener("click", () => playSound(cSound));
+document.addEventListener("DOMContentLoaded", function() {
+    const music = document.getElementById("background-music");
+    
+    // ลองเล่นเพลงเมื่อโหลดหน้าเว็บ
+    music.play().catch(error => {
+        console.warn("Autoplay ถูกบล็อก! กำลังรอการโต้ตอบจากผู้ใช้...");
+    });
+
+    // เปลี่ยนเพลงเมื่อ quiz-container ปรากฏ
+    const quizContainer = document.getElementById("quiz-container");
+    const observer = new MutationObserver(() => {
+        if (quizContainer.style.display !== "none") {
+            music.src = "sounds/startgame.mp3";
+            music.play();
+        }
+    });
+
+    observer.observe(quizContainer, { attributes: true, attributeFilter: ["style"] });
+});
 
 // สร้างดาวตกใหม่
 function createMeteor() {

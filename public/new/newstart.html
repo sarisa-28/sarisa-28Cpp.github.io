@@ -340,6 +340,7 @@ h1 {
 </div>
 <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
 <audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
+<audio id="background-music" src="sounds/start.mp3" autoplay loop></audio>
     <script src="/socket.io/socket.io.js"></script>
 
     <script>
@@ -636,6 +637,19 @@ if (progressList) {
     document.getElementById("start-game").addEventListener("click", () => playSound(oSound));
     document.getElementById("start-game-in-popup").addEventListener("click", () => playSound(oSound));
     document.getElementById("end-game").addEventListener("click", () => playSound(oSound));
+    document.addEventListener("DOMContentLoaded", function () {
+    const backgroundMusic = document.getElementById("background-music");
+    const popupsContainer = document.getElementById("popups-container");
+
+    const observer = new MutationObserver(() => {
+        if (popupsContainer.style.display === "flex") {
+            backgroundMusic.src = "sounds/startgame.mp3";
+            backgroundMusic.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเพลงใหม่:", err));
+        }
+    });
+
+    observer.observe(popupsContainer, { attributes: true, attributeFilter: ["style"] });
+});
 
                 // สร้างดาวตกใหม่
                 function createMeteor() {

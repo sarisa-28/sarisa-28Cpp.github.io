@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Music Player</title>
+</head>
+<body>
+    <audio id="background-music" src="sounds/bg.mp3" loop autoplay></audio>
+    <script>
+        const music = document.getElementById("background-music");
+
+        // ดึงสถานะจาก Local Storage (เล่นเพลงต่อเนื่อง)
+        if (localStorage.getItem("musicTime")) {
+            music.currentTime = parseFloat(localStorage.getItem("musicTime"));
+        }
+
+        // บันทึกเวลาปัจจุบันของเพลงทุกๆ 1 วินาที
+        setInterval(() => {
+            localStorage.setItem("musicTime", music.currentTime);
+        }, 1000);
+    </script>
+</body>
+</html>
