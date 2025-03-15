@@ -22,7 +22,7 @@
     align-items: center;
     height: 100vh;
     margin: 0;
-    padding-top: 250px; /* เพิ่มระยะห่างสำหรับเมนูด้านบน */
+    padding-top: 350px; /* เพิ่มระยะห่างสำหรับเมนูด้านบน */
 }
         .login-container {
     background: rgba(0, 0, 0, 0.7);
@@ -185,6 +185,23 @@
         background: linear-gradient(45deg, #232526, #414345, #485563); /* ดำเข้มไปน้ำเงิน */
     }
 }
+#soundToggle {
+    width: 120px; /* ขยายความกว้าง */
+    height: 40px; /* ขยายความสูง */
+    font-size: 18px; /* ขยายขนาดตัวอักษร */
+    background: linear-gradient(45deg, cyan, #00ccff);
+    color: black;
+    border: 2px solid white;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+}
+
+#soundToggle:hover {
+    background: linear-gradient(45deg, #00ccff, cyan);
+    transform: scale(1.05);
+    box-shadow: 0px 0px 10px cyan;
+}
 
     </style>
 </head>
@@ -215,8 +232,15 @@
     <div class="login-container" id="resetPasswordForm">
             <!-- แสดงชื่อผู้ใช้งาน -->
             <div id="user-welcome" style="text-align: center; font-size: 20px;">
-                <p>🔏 Reset Your Password 🔑, <span id="username-display"></span>!</p>
+                <p>🔏 Setting Your Earth 🔑, <span id="username-display"></span>!</p>
             </div>
+            <!-- ตั้งค่าเสียง -->
+            <label for="soundToggle"><h2>🔊 Sound Setting 🔊</h2></label>
+            <select id="soundToggle">
+            <option value="on">On</option>
+            <option value="off">Off</option>
+            </select>
+            <button onclick="saveSoundSetting()">Save</button>
 
     <h2>Reset Password</h2>
     <form>
@@ -404,7 +428,29 @@ window.onload = function() {
 
     document.getElementById("otp").addEventListener("click", () => playSound(oSound));
     document.getElementById("reset").addEventListener("click", () => playSound(oSound));
-                // สร้างดาวตกใหม่
+
+    //ตั้งค่าเสียงsettingเสียง
+        // โหลดค่าการตั้งค่าเสียงจาก localStorage
+        document.getElementById('soundToggle').value = localStorage.getItem('soundSetting') || 'on';
+
+        function saveSoundSetting() {
+            const setting = document.getElementById('soundToggle').value;
+            localStorage.setItem('soundSetting', setting);
+            alert('Sound setting saved!');
+        }
+
+        //ตั้งค่าเสียง
+document.addEventListener("DOMContentLoaded", function() {
+        const soundSetting = localStorage.getItem('soundSetting');
+
+        if (soundSetting === 'off') {
+            document.querySelectorAll('audio').forEach(audio => {
+                audio.muted = true;
+            });
+        }
+    });
+  
+    // สร้างดาวตกใหม่
                 function createMeteor() {
             const meteor = document.createElement('div');
             meteor.classList.add('meteor');

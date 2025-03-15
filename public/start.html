@@ -335,7 +335,6 @@ h1 {
 <audio id="background-music" src="sounds/start.mp3" autoplay loop></audio>
 
     <script src="/socket.io/socket.io.js"></script>
-
     <script>
         const socket = io();
         const roomCodeInput = document.getElementById('room-code');
@@ -628,6 +627,17 @@ if (progressList) {
 
     observer.observe(popupsContainer, { attributes: true, attributeFilter: ["style"] });
 });
+
+//ตั้งค่าเสียง
+document.addEventListener("DOMContentLoaded", function() {
+        const soundSetting = localStorage.getItem('soundSetting');
+
+        if (soundSetting === 'off') {
+            document.querySelectorAll('audio').forEach(audio => {
+                audio.muted = true;
+            });
+        }
+    });
 
                 // สร้างดาวตกใหม่
                 function createMeteor() {

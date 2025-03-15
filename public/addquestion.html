@@ -340,6 +340,17 @@ async function uploadFile() {
     document.getElementById("submit2").addEventListener("click", () => playSound(oSound));
     document.getElementById("uploadFile").addEventListener("click", () => playSound(oSound));
 
+    //ตั้งค่าเสียง
+document.addEventListener("DOMContentLoaded", function() {
+        const soundSetting = localStorage.getItem('soundSetting');
+
+        if (soundSetting === 'off') {
+            document.querySelectorAll('audio').forEach(audio => {
+                audio.muted = true;
+            });
+        }
+    });
+
 // สร้างดาวตกใหม่
 function createMeteor() {
     const meteor = document.createElement('div');

@@ -729,7 +729,16 @@ document.addEventListener("click", (event) => {
         playOSound();
     }
 });
+        //ตั้งค่าเสียง
+        document.addEventListener("DOMContentLoaded", function() {
+        const soundSetting = localStorage.getItem('soundSetting');
 
+        if (soundSetting === 'off') {
+            document.querySelectorAll('audio').forEach(audio => {
+                audio.muted = true;
+            });
+        }
+    });
 // สร้างดาวตกใหม่
 function createMeteor() {
     const meteor = document.createElement('div');

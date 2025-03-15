@@ -18,6 +18,19 @@
         setInterval(() => {
             localStorage.setItem("musicTime", music.currentTime);
         }, 1000);
+
+        //ตั้งค่าเสียง
+document.addEventListener("DOMContentLoaded", function() {
+        const soundSetting = localStorage.getItem('soundSetting');
+
+        if (soundSetting === 'off') {
+            document.querySelectorAll('audio').forEach(audio => {
+                audio.muted = true;
+            });
+        }
+    });
+
+
     </script>
 </body>
 </html>

@@ -387,6 +387,18 @@ document.getElementById('search-btn-history').addEventListener('click', searchHi
 
     document.getElementById("search-btn-history").addEventListener("click", () => playSound(oSound));
     document.getElementById("close-btn").addEventListener("click", () => playSound(oSound));
+
+    //ตั้งค่าเสียง
+document.addEventListener("DOMContentLoaded", function() {
+        const soundSetting = localStorage.getItem('soundSetting');
+
+        if (soundSetting === 'off') {
+            document.querySelectorAll('audio').forEach(audio => {
+                audio.muted = true;
+            });
+        }
+    });
+
     
             // สร้างดาวตกใหม่
             function createMeteor() {
