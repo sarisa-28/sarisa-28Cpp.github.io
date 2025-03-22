@@ -1,0 +1,315 @@
+<!-- public/onoff.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player Status</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+        <!-- เพิ่มลิงค์ Font Awesome -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        /* ปรับพื้นหลังให้เป็นธีมอวกาศ */
+body {
+    background: url('https://spaceth.co/wp-content/uploads/2019/03/dnb_land_ocean_ice.2012.3600x1800-1024x512.jpg') no-repeat center center fixed;
+    background-size: cover;
+}
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        .online {
+            color: green;
+        }
+        .offline {
+            color: red;
+        }
+                /* แถบเมนูข้างบน */
+                #top-menu {
+            background: linear-gradient(45deg, #ff7e5f, #feb47b);
+            color: white;
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            position: sticky;
+            top: 1%;
+            z-index: 100;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            animation: gradient-animation 6s ease infinite;
+            border-bottom: 5px solid cyan;
+            box-shadow: 0 0 20px cyan;
+        }
+
+        #top-menu a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            margin: 0 15px;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        #top-menu a:hover {
+            background-color: #ff6f61;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px cyan;
+        }
+
+        @keyframes gradient-animation {
+    0%, 100% {
+        background: linear-gradient(45deg, #0f2027, #203a43, #2c5364); /* เขียวเข้มไปน้ำเงิน */
+    }
+    50% {
+        background: linear-gradient(45deg, #232526, #414345, #485563); /* ดำเข้มไปน้ำเงิน */
+    }
+}
+
+/* หัวข้อหลัก */
+h1 {
+    font-size: 2.5rem;
+    color:cyan;
+    text-shadow: 0 0 15px cyan, 0 0 30px blue;
+    margin-bottom: 20px;
+    text-align: center; /* จัดให้อยู่ตรงกลางแนวนอน */
+    display: flex;
+    justify-content: center; /* จัดให้อยู่ตรงกลางแนวนอน */
+    align-items: center; /* จัดให้อยู่ตรงกลางแนวตั้ง */
+    height: 10vh; /* ปรับความสูงของ h1 ให้เหมาะสม */
+}
+h2{
+    color: #ffffff;
+}
+
+        /* ตารางผู้เล่น */
+        table {
+            width: 80%;
+            margin: auto;
+            border-collapse: collapse;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            box-shadow: 0 0 20px cyan;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 15px;
+            border: 1px solid cyan;
+            text-align: center;
+        }
+
+        th {
+            background: rgba(255, 255, 255, 0.3);
+            color: cyan;
+            font-size: 1.2rem;
+            text-shadow: 0 0 10px cyan;
+        }
+
+        td {
+            font-size: 1rem;
+            color: #ffffff;
+        }
+
+        /* สถานะของผู้เล่น */
+        .online {
+            color: lime !important;
+            font-weight: bold;
+            text-shadow: 0 0 10px lime;
+        }
+        .offline {
+            color: red !important;
+            font-weight: bold;
+            text-shadow: 0 0 10px red;
+        }
+
+        /* เอฟเฟกต์แสงวาร์ป */
+        .warp-effect {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            background: radial-gradient(circle, rgba(0, 255, 255, 0.2) 0%, transparent 80%);
+        }
+                /* การเคลื่อนไหวดาวตกที่ช้าและมีเอฟเฟ็กต์ */
+@keyframes meteor-shower {
+    0% {
+        transform: translateY(-100vh) rotate(0deg);
+    }
+    50% {
+        transform: translateY(50vh) rotate(180deg);
+    }
+    100% {
+        transform: translateY(100vh) rotate(360deg);  /* หมุนและตกไปที่ล่าง */
+    }
+}
+
+.meteor {
+    position: absolute;
+    top: -10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+    animation: meteor-shower linear infinite;
+}
+
+.playing {
+    color: orange;
+    font-weight: bold;
+    text-shadow: 0 0 10px orange;
+}
+
+.not-playing {
+    color: gray;
+    font-weight: bold;
+}
+
+        /* Search Bar */
+        #search-bar {
+            display: flex;
+            justify-content: center;
+            margin: 20px auto;
+        }
+        #search-input {
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid cyan;
+            width: 20%;
+        }
+    </style>
+</head>
+<body>
+            <!-- แถบเมนูข้างบน -->
+            <div id="top-menu">
+                <a href="start.html"><i class="fa-solid fas fa-play fa-bounce" style="--fa-bounce-start-scale-x: 1; --fa-bounce-start-scale-y: 1; --fa-bounce-jump-scale-x: 1; --fa-bounce-jump-scale-y: 1; --fa-bounce-land-scale-x: 1; --fa-bounce-land-scale-y: 1; color: cyan;"></i> Start</a>
+                <a href="addquestion.html">🤔Add Questions💭</a>
+                <a href="roomcode.html"><i class="fas fa-key fa-solid fa-flip"  style="--fa-animation-duration: 3s; color: cyan;"></i> Set Room Code</a>  
+                <a href="seeroom.html">🚩View Room Codes👀</a> 
+                <a href="scores.html"><i class="fas fa-trophy fa-beat" style="color: cyan;"></i> View Scores</a>
+                <a href="historyroomcode.html">👑History RoomCode🏰</a>
+                <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
+                <a href="evaluation.html">🙇🏻 Evaluation 🙇🏻‍♀️</a>
+                <a href="onoff.html">🫀Status💫</a>
+                <a href="new/newstart.html"><i class="fa-solid fa-globe fa-spin" style="color: cyan;"></i> ไปยังโลกที่ 2</a>
+                <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
+            </div>
+
+    <h1>Player Online Status</h1>
+    <div id="search-bar">
+        <h2>Search by Username :  </h2><input type="text" id="search-input" placeholder="ค้นหา Username...">
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Username</th>
+                <th>Status</th>
+                <th>การท่องอวกาศ</th>
+            </tr>
+        </thead>
+        <tbody id="player-list">
+            <!-- Player data will be inserted here -->
+        </tbody>
+    </table>
+    <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
+    <audio id="hoverSound" src="sounds/h.mp3" preload="auto"></audio>
+    <iframe src="music.html" style="display: none;"></iframe>
+
+    <script>
+        const socket = io();
+        document.getElementById('search-input').addEventListener('input', function () {
+            const searchValue = this.value.toLowerCase();
+            document.querySelectorAll('#player-list tr').forEach(row => {
+                const username = row.cells[1].textContent.toLowerCase();
+                row.style.display = username.includes(searchValue) ? '' : 'none';
+            });
+        });
+        function fetchPlayers() {
+            fetch('/api/players')
+                .then(response => response.json())
+                .then(players => {
+                    const tableBody = document.getElementById('player-list');
+                    tableBody.innerHTML = '';
+                    players.forEach(player => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                            <td>${player.type}</td>
+                            <td>${player.username}</td>
+                            <td class="${player.status.toLowerCase()}">${player.status}</td>
+                            <td class="${player.isPlaying ? 'playing' : 'not-playing'}"> ${player.isPlaying ? 'กำลังท่องอวกาศ' : 'ยังไม่เริ่ม'}</td>
+                        `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error fetching players:', error));
+        }
+
+        socket.on('update-player-status', fetchPlayers);
+        fetchPlayers();
+
+// เสียงปุ่ม
+    // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
+    function playSound(sound) {
+        sound.pause();        // หยุดเสียงก่อนหน้า (ถ้ามี)
+        sound.currentTime = 0; // รีเซ็ตไปจุดเริ่มต้น
+        sound.play();         // เล่นเสียงใหม่ทันที
+    }
+
+    document.querySelectorAll("#top-menu a").forEach(item => {
+    item.addEventListener("mouseenter", () => {
+        const hoverSound = document.getElementById("hoverSound");
+        if (hoverSound) {
+            hoverSound.pause();  // หยุดเสียงก่อนหน้า
+            hoverSound.currentTime = 0; // รีเซ็ตเสียงไปจุดเริ่มต้น
+            hoverSound.play().catch(err => console.warn("⚠️ ไม่สามารถเล่นเสียง hover:", err));
+        }
+    });
+});
+//ตั้งค่าเสียง
+document.addEventListener("DOMContentLoaded", function() {
+        const soundSetting = localStorage.getItem('soundSetting');
+
+        if (soundSetting === 'off') {
+            document.querySelectorAll('audio').forEach(audio => {
+                audio.muted = true;
+            });
+        }
+    });
+
+        // สร้างดาวตกใหม่
+function createMeteor() {
+    const meteor = document.createElement('div');
+    meteor.classList.add('meteor');
+    document.body.appendChild(meteor);
+    
+    // กำหนดตำแหน่งและทิศทางของดาว
+    meteor.style.left = `${Math.random() * 100}vw`;
+    meteor.style.animationDuration = `${Math.random() * 5 + 5}s`;  // ทำให้ตกช้าๆ
+
+    // ทำให้ดาวมีขนาดและความโปร่งแสงแตกต่างกัน
+    meteor.style.width = `${Math.random() * 3 + 4}px`;
+    meteor.style.height = `${Math.random() * 3 + 4}px`;
+    meteor.style.opacity = Math.random() * 0.5 + 0.5;
+
+    // ลบดาวหลังจากการเคลื่อนไหวเสร็จ
+    setTimeout(() => {
+        meteor.remove();
+    }, (Math.random() * 5 + 5) * 1000);  // ลบดาวตามเวลาของ animation
+}
+
+// สร้างดาวตกทุกๆ 0.5 วินาที
+setInterval(createMeteor, 500);
+    </script>
+</body>
+</html>

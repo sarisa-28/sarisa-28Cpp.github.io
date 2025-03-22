@@ -291,6 +291,7 @@ h1 {
             <a href="newhistoryroomcode.html">👑History RoomCode🏰</a>
             <a href="newsetting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
             <a href="newevaluation.html">🙇🏻 Evaluation 🙇🏻‍♀️</a>
+            <a href="/onoff.html">🫀Status💫</a>
             <a href="/start.html"><i class="fa-solid fa-globe fa-spin" style="color: cyan;"></i>กลับไปโลกที่ 1</a>
             <a href="/index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
         </div>
@@ -416,6 +417,7 @@ h1 {
         
         alert('Game has started! All players are now ready.');
     }
+    socket.emit('player-start-game', username);
 });
 
 socket.on('game-started', () => {
@@ -521,6 +523,7 @@ document.getElementById('end-game').addEventListener('click', async () => {
 
             scores.push({ rank: currentRank, name, score });
         }
+        socket.emit('player-end-game', username);
     });
 
     // ดีบัก: ดูว่า scores มีข้อมูลหรือไม่

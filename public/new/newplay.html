@@ -696,6 +696,7 @@ socket.on('game-started', () => {
     displayQuiz(currentQuestionIndex);
 
     document.getElementById('overlay').style.display = 'none';
+    socket.emit('player-start-game', username);
 });
 
 // ฟังเหตุการณ์เกมเริ่มแล้ว
@@ -703,6 +704,7 @@ socket.on('game-started', () => {
 document.getElementById('quiz-container').style.display = 'block';
 document.getElementById('overlay').style.display = 'none';
 displayQuiz(currentQuestionIndex);
+socket.emit('player-start-game', username);
 });
 
 // ฟังก์ชันสำหรับดึงคำถามจากเซิร์ฟเวอร์และแสดงในหน้าเว็บ
@@ -1019,7 +1021,6 @@ function showScorePopup(correct, player, score) {
     }, 10000); // แสดงผล 10 วินาที แล้วโหลดคำถามถัดไป
 }
 
-
 function launchConfetti() {
 // เรียกใช้ canvas-confetti เพื่อแสดงพลุแบบสุ่ม
 confetti({
@@ -1187,6 +1188,7 @@ socket.emit('player-score2', {
         });
         alert(`Game Over! Your Score: ${score}`);
 resetQuiz();
+socket.emit('player-end-game', username);
 }
 
 //แถบสถานะเกม

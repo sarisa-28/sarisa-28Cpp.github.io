@@ -245,6 +245,105 @@ button.selected {
     color: cyan;
     margin: 5px 0;
 }
+/* ตกแต่ง popup-editquestion ให้เป็นธีมอวกาศ */
+#popup-editquestion {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 50, 0.95); /* พื้นหลังอวกาศ */
+    color: cyan;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.7);
+    z-index: 1000;
+    width: 50%;
+    max-width: 600px;
+    animation: fadeIn 0.5s ease-in-out;
+    border: 2px solid cyan;
+}
+
+/* แอนิเมชันเปิด */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -55%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* คอนเทนต์ภายใน Popup */
+.popup-content {
+    text-align: center;
+    font-family: 'Orbitron', sans-serif;
+}
+
+/* ปุ่มปิด Popup */
+.close {
+    float: right;
+    font-size: 28px;
+    cursor: pointer;
+    color: white;
+    transition: 0.3s;
+}
+
+.close:hover {
+    color: red;
+    transform: scale(1.2);
+}
+
+/* สไตล์ของ Input และ Select */
+#popup-editquestion input, 
+#popup-editquestion select, 
+#popup-editquestion textarea {
+    width: 90%;
+    padding: 10px;
+    margin: 5px 0;
+    background: rgba(0, 255, 255, 0.2);
+    border: 1px solid cyan;
+    color: rgb(0, 0, 0);
+    font-size: 16px;
+    font-family: 'Orbitron', sans-serif;
+    border-radius: 5px;
+    text-align: center;
+    box-shadow: 0 0 10px rgba(0, 255, 255, 0.5);
+}
+
+/* ปุ่ม Save Changes */
+#save-edit-btn {
+    background: linear-gradient(45deg, cyan, #00ffff);
+    color: black;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 18px;
+    font-weight: bold;
+    margin-top: 10px;
+    border-radius: 5px;
+    transition: transform 0.3s, box-shadow 0.3s;
+}
+
+#save-edit-btn:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 15px cyan;
+}
+/* สร้างเอฟเฟกต์เบลอพื้นหลัง */
+#blur-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5); /* ทำให้มืดลงเล็กน้อย */
+    backdrop-filter: blur(10px); /* เอฟเฟกต์เบลอ */
+    z-index: 999; /* อยู่ต่ำกว่า popup */
+    display: none;
+    transition: opacity 0.3s ease-in-out;
+}
 
     </style>
 </head>
@@ -259,6 +358,7 @@ button.selected {
             <a href="historyroomcode.html">👑History RoomCode🏰</a>
             <a href="setting.html"><i class="fas fa-cog fa-pulse" style="color: cyan;"></i> Setting</a>
             <a href="evaluation.html">🙇🏻 Evaluation 🙇🏻‍♀️</a>
+            <a href="onoff.html">🫀Status💫</a>
             <a href="new/newstart.html"><i class="fa-solid fa-globe fa-spin" style="color: cyan;"></i> ไปยังโลกที่ 2</a>
             <a href="index.html"><i class="fa-solid fas fa-sign-out-alt fa-shake" style="color: cyan;"></i> Log Out</a>
         </div>
@@ -329,6 +429,7 @@ button.selected {
                     <th>Type</th>
                     <th>Question</th>
                     <th>คำตอบ/ตัวเลือกที่ถูกต้อง</th>
+                    <th>Edit</th>
                     <th>ลบคำถามออกจากระบบ</th>
                     <th>เลือกคำถาม</th>
                 </tr>
@@ -337,7 +438,30 @@ button.selected {
                 <!-- ข้อมูลคำถามจะถูกแสดงที่นี่ -->
             </tbody>
         </table>
-                
+        <div id="blur-background"></div> <!-- พื้นหลังเบลอ -->
+        <div id="popup-editquestion" class="popup">
+            <div class="popup-content">
+                <span class="close" id="close-edit-popup">&times;</span>
+                <h2>Edit Question</h2>
+                <label>Type:</label>
+                <select id="edit-type">
+                    <option value="multiple-choice">Multiple Choice</option>
+                    <option value="essay">Essay</option>
+                </select>
+                <label>Question:</label>
+                <textarea id="edit-question"></textarea>
+                <label>Options (comma-separated):</label>
+                <input type="text" id="edit-options">
+                <label>Correct Answer:</label>
+                <input type="text" id="edit-correct">
+                <label>Timer (seconds):</label>
+                <input type="number" id="edit-timer">
+                <label>Level:</label>
+                <input type="number" id="edit-level">
+                <button id="save-edit-btn">Save Changes</button>
+            </div>
+        </div>
+        
     </div>
     <div id="meteor-background"></div>
     <audio id="o-sound" src="sounds/o.mp3" preload="auto"></audio>
@@ -388,6 +512,7 @@ button.selected {
     <td>${quiz.type}</td>
     <td>${quiz.question}</td>
     <td>${quiz.correct}</td>
+    <td><button class="edit-btn" id="edit-btn" data-id="${quiz._id}">Edit</button></td>
     <td><button class="delete-btn" id="delete-btn" data-id="${quiz._id}">ลบคำถามนี้</button></td>
     <td><button class="select-btn" id="select-btn" data-score="${quiz.score || getScoreByLevel(quiz.level)}" data-timer="${quiz.timer}">เลือกคำถาม</button></td>
 `;
@@ -680,6 +805,66 @@ async function updateTotalQuestionsInfo() {
 // เรียกใช้ฟังก์ชันเพื่อโหลดข้อมูลตอนเปิดหน้าเว็บ
 updateTotalQuestionsInfo();
 
+document.addEventListener("click", async (event) => {
+    if (event.target.classList.contains("edit-btn")) {
+        const quizId = event.target.dataset.id;
+
+        try {
+            const response = await fetch(`/quiz/${quizId}`);
+            const quiz = await response.json();
+
+            document.getElementById("edit-type").value = quiz.type;
+            document.getElementById("edit-question").value = quiz.question;
+            document.getElementById("edit-options").value = quiz.options ? quiz.options.join(", ") : "";
+            document.getElementById("edit-correct").value = quiz.correct;
+            document.getElementById("edit-timer").value = quiz.timer;
+            document.getElementById("edit-level").value = quiz.level;
+
+            document.getElementById("popup-editquestion").style.display = "block";
+            document.getElementById("blur-background").style.display = "block"; 
+            document.getElementById("save-edit-btn").dataset.id = quizId;
+        } catch (error) {
+            console.error("Error fetching question:", error);
+        }
+    }
+});
+
+document.getElementById("close-edit-popup").addEventListener("click", () => {
+    document.getElementById("popup-editquestion").style.display = "none";
+    document.getElementById("blur-background").style.display = "none";
+});
+
+document.getElementById("save-edit-btn").addEventListener("click", async () => {
+    const quizId = document.getElementById("save-edit-btn").dataset.id;
+    const updatedData = {
+        type: document.getElementById("edit-type").value,
+        question: document.getElementById("edit-question").value,
+        options: document.getElementById("edit-options").value.split(",").map(opt => opt.trim()),
+        correct: document.getElementById("edit-correct").value,
+        timer: parseInt(document.getElementById("edit-timer").value, 10),
+        level: parseInt(document.getElementById("edit-level").value, 10),
+    };
+
+    try {
+        const response = await fetch(`/update-quiz/${quizId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(updatedData),
+        });
+
+        if (response.ok) {
+            alert("Question updated successfully!");
+            document.getElementById("popup-editquestion").style.display = "none";
+            document.getElementById("blur-background").style.display = "none"
+            fetchQuestions();
+        } else {
+            alert("Failed to update question.");
+        }
+    } catch (error) {
+        console.error("Error updating question:", error);
+    }
+});
+
 // เสียงปุ่ม
     // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์
     function playSound(sound) {
@@ -705,7 +890,8 @@ updateTotalQuestionsInfo();
     document.getElementById("random-select-btn").addEventListener("click", () => playSound(oSound));
     document.getElementById("reset-btn").addEventListener("click", () => playSound(oSound));
     document.getElementById("save-roomcode-btn").addEventListener("click", () => playSound(oSound));
-    
+    document.getElementById("save-edit-btn").addEventListener("click", () => playSound(oSound));
+
 // ฟังก์ชันเล่นเสียง
 function playOSound() {
     if (oSound) {

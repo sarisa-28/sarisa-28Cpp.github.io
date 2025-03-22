@@ -63,7 +63,9 @@ const userSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    type: { type: String, enum: ['Admin', 'Player'], required: true }
+    type: { type: String, enum: ['Admin', 'Player'], required: true },
+    status: { type: String, enum: ['Online', 'Offline'], default: 'Offline' },
+    isPlaying: { type: Boolean, default: false }
 });
 
 const User = mongoose.model('User', userSchema);
@@ -685,6 +687,32 @@ let playerProgress = {};
 io.on('connection', (socket) => {
     console.log('A player connected');
 
+    socket.on('player-online', async (username) => {
+        await User.findOneAndUpdate(
+            { username },
+            { status: 'Online', socketId: socket.id }
+        );
+        io.emit('update-player-status');
+    });
+    
+    socket.on('player-offline', async (username) => {
+        await User.findOneAndUpdate({ username }, { status: 'Offline' });
+        io.emit('update-player-status');
+    });    
+
+    socket.on('disconnect', async () => {
+        console.log(`A player disconnected: ${socket.id}`);
+    
+        const user = await User.findOneAndUpdate(
+            { socketId: socket.id }, // ใช้ socketId ที่เชื่อมโยงกับ user
+            { status: 'Offline' }
+        );
+    
+        if (user) {
+            io.emit('update-player-status');
+        }
+    });
+
     socket.on('join-room', (roomCode, playerName, isAdmin) => {
         socket.join(roomCode);
         console.log(`Player ${playerName} joined room ${roomCode}, Admin: ${isAdmin}`);
@@ -831,6 +859,27 @@ io.on('connection', (socket) => {
             console.error("Error updating scores:", err);
         }
     });
+    
+    socket.on('player-start-game', async (username) => {
+        try {
+            await User.findOneAndUpdate({ username }, { isPlaying: true });
+            io.emit('update-player-status');
+            console.log(`${username} กำลังเล่นเกม`);
+        } catch (error) {
+            console.error('Error updating isPlaying:', error);
+        }
+    });
+    
+    socket.on('player-end-game', async (username) => {
+        try {
+            await User.findOneAndUpdate({ username }, { isPlaying: false });
+            io.emit('update-player-status');
+            console.log(`${username} จบเกมแล้ว`);
+        } catch (error) {
+            console.error('Error updating isPlaying:', error);
+        }
+    });    
+    
 });
 
 // การตรวจสอบใน server
@@ -1106,6 +1155,49 @@ app.post('/upload-questions', upload.single('file'), async (req, res) => {
     } catch (error) {
         console.error('Error uploading questions:', error);
         res.status(500).json({ error: 'Error uploading questions' });
+    }
+});
+app.get('/quiz/:id', async (req, res) => {
+    try {
+        const quiz = await Quiz.findById(req.params.id);
+        if (!quiz) {
+            return res.status(404).send("Question not found");
+        }
+        res.json(quiz);
+    } catch (error) {
+        console.error("Error fetching question:", error);
+        res.status(500).send("Error fetching question");
+    }
+});
+
+app.put('/update-quiz/:id', async (req, res) => {
+    try {
+        const { type, question, options, correct, timer, level } = req.body;
+        const updatedQuiz = await Quiz.findByIdAndUpdate(
+            req.params.id,
+            { type, question, options, correct, timer, level },
+            { new: true }
+        );
+
+        if (!updatedQuiz) {
+            return res.status(404).send("Question not found");
+        }
+
+        res.json({ message: "Question updated successfully", updatedQuiz });
+    } catch (error) {
+        console.error("Error updating question:", error);
+        res.status(500).send("Error updating question");
+    }
+});
+
+// API ดึงรายชื่อผู้เล่นทั้งหมดพร้อมสถานะ
+app.get('/api/players', async (req, res) => {
+    try {
+        const players = await User.find({}, 'username type status isPlaying'); // ✅ เพิ่ม isPlaying
+        res.json(players);
+    } catch (error) {
+        console.error('Error fetching players:', error);
+        res.status(500).send('Error fetching players');
     }
 });
 
@@ -1730,6 +1822,38 @@ app.post('/upload-questions2', upload.single('file'), async (req, res) => {
     } catch (error) {
         console.error('Error uploading questions:', error);
         res.status(500).json({ error: 'Error uploading questions' });
+    }
+});
+app.get('/quiz2/:id', async (req, res) => {
+    try {
+        const quiz2 = await Quiz2.findById(req.params.id);
+        if (!quiz2) {
+            return res.status(404).send("Question not found");
+        }
+        res.json(quiz2);
+    } catch (error) {
+        console.error("Error fetching question:", error);
+        res.status(500).send("Error fetching question");
+    }
+});
+
+app.put('/update-quiz2/:id', async (req, res) => {
+    try {
+        const { type, question, options, correct, timer, level } = req.body;
+        const updatedQuiz2 = await Quiz2.findByIdAndUpdate(
+            req.params.id,
+            { type, question, options, correct, timer, level },
+            { new: true }
+        );
+
+        if (!updatedQuiz2) {
+            return res.status(404).send("Question not found");
+        }
+
+        res.json({ message: "Question updated successfully", updatedQuiz2 });
+    } catch (error) {
+        console.error("Error updating question:", error);
+        res.status(500).send("Error updating question");
     }
 });
 

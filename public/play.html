@@ -509,7 +509,6 @@ button:hover {
 #flag {
     font-size: 30px;
 }
-
     </style>
 </head>
 <body>  
@@ -687,6 +686,8 @@ socket.on('game-started', () => {
     displayQuiz(currentQuestionIndex);
 
     document.getElementById('overlay').style.display = 'none';
+
+    socket.emit('player-start-game', username);
 });
 
 // ฟังเหตุการณ์เกมเริ่มแล้ว
@@ -694,6 +695,9 @@ socket.on('game-started', () => {
 document.getElementById('quiz-container').style.display = 'block';
 document.getElementById('overlay').style.display = 'none';
 displayQuiz(currentQuestionIndex);
+
+socket.emit('player-start-game', username);
+
 });
 
 // ฟังก์ชันสำหรับดึงคำถามจากเซิร์ฟเวอร์และแสดงในหน้าเว็บ
@@ -1144,6 +1148,7 @@ socket.emit('player-score', {
         });
         alert(`Game Over! Your Score: ${score}`);
 resetQuiz();
+socket.emit('player-end-game', username);
 }
 
 //แถบสถานะเกม
