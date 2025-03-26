@@ -1768,8 +1768,22 @@ app.get('/get-current-scores/:roomCode2', async (req, res) => {
 // API สำหรับดึงประวัติห้องเกมทั้งหมด
 app.get('/api/historyroomcode2', async (req, res) => {
     try {
-        const history = await HistoryRoomCode2.find().sort({ datePlayed: -1 }); // เรียงจากล่าสุดไปเก่าสุด
-        res.json(history);
+        const history = await HistoryRoomCode2.find().sort({ datePlayed: -1 });
+
+        // ดึงข้อมูล adminUsername จาก RoomCode
+        const roomCodes = await RoomCode2.find({}, 'roomCode adminUsername');
+        const roomCodeMap = {};
+        roomCodes.forEach(room => {
+            roomCodeMap[room.roomCode2] = room.adminUsername;
+        });
+
+        // เพิ่ม adminUsername เข้าไปในข้อมูล History
+        const updatedHistory = history.map(entry => ({
+            ...entry.toObject(),
+            adminUsername: roomCodeMap[entry.roomCode2] || "Unknown"
+        }));
+
+        res.json(updatedHistory);
     } catch (error) {
         console.error('Error fetching history:', error);
         res.status(500).send('Error fetching history');

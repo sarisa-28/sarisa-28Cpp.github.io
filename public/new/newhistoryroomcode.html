@@ -325,7 +325,7 @@ h1 {
         ];
                         box.style.background = colors[Math.floor(Math.random() * colors.length)];
                         box.innerHTML = `
-    <h3>Room ${history.roomCode2}</h3>
+    <h3>Room ${history.roomCode}</h3>
     <p>${new Date(history.datePlayed).toLocaleString()}</p>
     <p style="font-size: 14px; color: yellow;"><strong>Admin:</strong> ${history.adminUsername || "Unknown"}</p>
 `;
@@ -341,6 +341,11 @@ h1 {
                 document.getElementById('overlay').style.display = 'block';
                 document.getElementById('modal-room-code').innerText = history.roomCode;
                 document.getElementById('modal-date').innerText = new Date(history.datePlayed).toLocaleString();
+                
+                // แสดง Admin ผู้สร้าง RoomCode
+                const adminInfo = document.createElement('p');
+                adminInfo.innerHTML = `<strong>Admin:</strong> ${history.adminUsername || "Unknown"}`;
+    
                 const playersList = document.getElementById('modal-players');
                 playersList.innerHTML = '';
                 history.players.forEach(player => {
