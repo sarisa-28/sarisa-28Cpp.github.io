@@ -323,7 +323,11 @@ h1 {
             '#8A2BE2', '#00FA9A', '#D2691E', '#DC143C', '#20B2AA'
         ];
                         box.style.background = colors[Math.floor(Math.random() * colors.length)];
-                        box.innerHTML = `<h3>Room ${history.roomCode}</h3><p>${new Date(history.datePlayed).toLocaleString()}</p>`;
+                        box.innerHTML = `
+    <h3>Room ${history.roomCode}</h3>
+    <p>${new Date(history.datePlayed).toLocaleString()}</p>
+    <p style="font-size: 14px; color: yellow;"><strong>Admin:</strong> ${history.adminUsername || "Unknown"}</p>
+`;
                         box.onclick = () => 
                         openModal(history);
                         container.appendChild(box);
@@ -337,8 +341,15 @@ h1 {
                 document.getElementById('overlay').style.display = 'block';
                 document.getElementById('modal-room-code').innerText = history.roomCode;
                 document.getElementById('modal-date').innerText = new Date(history.datePlayed).toLocaleString();
+                
+                // แสดง Admin ผู้สร้าง RoomCode
+                const adminInfo = document.createElement('p');
+                adminInfo.innerHTML = `<strong>Admin:</strong> ${history.adminUsername || "Unknown"}`;
+    
                 const playersList = document.getElementById('modal-players');
                 playersList.innerHTML = '';
+                playersList.appendChild(adminInfo); // เพิ่ม adminUsername
+
                 history.players.forEach(player => {
                     const li = document.createElement('li');
                     li.innerText = `Rank ${player.rank}: ${player.name} - ${player.score} points`;
@@ -346,6 +357,7 @@ h1 {
                 });
                 document.getElementById('history-modal').style.display = 'block';
             }
+
             function closeModal() {
                 document.getElementById('overlay').style.display = 'none';
                 document.getElementById('history-modal').style.display = 'none';

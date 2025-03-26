@@ -437,6 +437,7 @@ button.selected {
             <tbody>
                 <!-- ข้อมูลคำถามจะถูกแสดงที่นี่ -->
             </tbody>
+            <button id="delete-selected-btn">ลบที่เลือกทั้งหมด</button>
         </table>
         <div id="blur-background"></div> <!-- พื้นหลังเบลอ -->
         <div id="popup-editquestion" class="popup">
@@ -483,39 +484,41 @@ button.selected {
         // ฟังก์ชันสำหรับแสดงคำถามในตาราง
         async function fetchQuestions() {
     try {
-        const response = await fetch('/quiz');
+        const adminUsername = sessionStorage.getItem('username'); // ดึง username ของ admin
+        const response = await fetch(`/quiz?adminUsername=${adminUsername}`);
         const questions = await response.json();
-        const tableBody = document.querySelector("#quiz-table tbody");
+
+        const selectedLevel = document.getElementById("level-filter").value;
+        const selectedType = document.getElementById("type-filter").value;
+
+        console.log("🔎 กำลังดึงคำถาม..."); 
+        console.log("เลือกเลเวล:", selectedLevel);
+        console.log("เลือกประเภท:", selectedType);
         
-        // เคลียร์ตารางก่อนแสดงใหม่
+        // ✅ กรองคำถามที่ตรงกับตัวกรอง
+        const filteredQuestions = questions.filter(q => 
+            (selectedLevel === "all" || q.level.toString() === selectedLevel) &&
+            (selectedType === "all" || q.type === selectedType)
+        );
+
+        console.log("📋 คำถามที่เหลือหลังจากกรอง:", filteredQuestions.length);
+
+        const tableBody = document.querySelector("#quiz-table tbody");
         tableBody.innerHTML = '';
 
-        // ฟังก์ชันที่กรองคำถามตามเลเวลและTypeที่เลือก
-        const selectedLevel = document.getElementById('level-filter').value;
-        const selectedType = document.getElementById('type-filter').value;
-        
-        // กรองคำถามโดยเลเวลและประเภท
-        const filteredQuestions = questions.filter(quiz => {
-            const levelMatch = selectedLevel === 'all' || quiz.level.toString() === selectedLevel;
-            const typeMatch = selectedType === 'all' || quiz.type === selectedType;  // กรองตามประเภท
-
-            return levelMatch && typeMatch;
-        });
-        
         filteredQuestions.forEach((quiz) => {
             const row = document.createElement("tr");
-            row.dataset.quizId = quiz._id;  // เพิ่ม ID ของคำถามในแต่ละแถว
+            row.dataset.quizId = quiz._id;
 
-            // เพิ่มคะแนนลงใน data-score ของปุ่มเลือกคำถาม
             row.innerHTML = `
-    <td>${quiz.level}</td>
-    <td>${quiz.type}</td>
-    <td>${quiz.question}</td>
-    <td>${quiz.correct}</td>
-    <td><button class="edit-btn" id="edit-btn" data-id="${quiz._id}">Edit</button></td>
-    <td><button class="delete-btn" id="delete-btn" data-id="${quiz._id}">ลบคำถามนี้</button></td>
-    <td><button class="select-btn" id="select-btn" data-score="${quiz.score || getScoreByLevel(quiz.level)}" data-timer="${quiz.timer}">เลือกคำถาม</button></td>
-`;
+                <td>${quiz.level}</td>
+                <td>${quiz.type}</td>
+                <td>${quiz.question}</td>
+                <td>${quiz.correct}</td>
+                <td><button class="edit-btn" data-id="${quiz._id}">Edit</button></td>
+                <td><button class="delete-btn" data-id="${quiz._id}">ลบคำถามนี้</button></td>
+                <td><button class="select-btn" data-score="${quiz.score || getScoreByLevel(quiz.level)}" data-timer="${quiz.timer}">เลือกคำถาม</button></td>
+            `;
             tableBody.appendChild(row);
         });
 
@@ -574,6 +577,7 @@ button.selected {
                     // เปลี่ยนสีปุ่มที่ถูกเลือก
                     e.target.classList.add('selected');
                 }
+        
             });
         });
     } catch (err) {
@@ -664,7 +668,11 @@ setInterval(createMeteor, 500);
 // ฟังก์ชันสำหรับบันทึก RoomCode และคำถามที่เลือก
 document.getElementById('save-roomcode-btn').addEventListener('click', async function () {
     const roomCode = document.getElementById('roomcode-input').value.trim();
-    
+    const adminUsername = sessionStorage.getItem('username'); // ดึงค่าจาก sessionStorage
+    if (!adminUsername) {
+        console.error("adminUsername is not defined");
+    }
+
     // ตรวจสอบว่า RoomCode มีความยาว 4 ตัว
     if (roomCode.length !== 4) {
         alert("กรุณากรอก Room Code ที่ประกอบด้วยตัวเลข 4 ตัว.");
@@ -680,6 +688,7 @@ document.getElementById('save-roomcode-btn').addEventListener('click', async fun
         totalmultipleChoice: totalmultipleChoice,
         totalEssay: totalEssay,
         totalQuestions: totalQuestions,
+        adminUsername: adminUsername  // ✅ เพิ่ม adminUsername
     };
 
     try {
@@ -773,7 +782,8 @@ function updateMenu2() {
 //แสดงจำนวนคำถาม
 async function updateTotalQuestionsInfo() {
     try {
-        const response = await fetch('/quiz'); // ดึงข้อมูลคำถามทั้งหมดจากเซิร์ฟเวอร์
+        const adminUsername = sessionStorage.getItem('username'); 
+        const response = await fetch(`/quiz?adminUsername=${adminUsername}`);
         const questions = await response.json();
 
         let totalQuestions = questions.length;
@@ -793,7 +803,7 @@ async function updateTotalQuestionsInfo() {
         let essayLevel3 = essayQuestions.filter(q => q.level == 3).length;
 
         // อัปเดตข้อมูลในหน้าเว็บ
-        document.getElementById("total-questions-all").textContent = totalQuestions;
+        document.getElementById("total-questions-all").textContent = questions.length;
         document.getElementById("total-multiple-all").textContent = `${multipleChoiceCount} ข้อ (เลเวล1: ${multipleLevel1} ข้อ, เลเวล2: ${multipleLevel2} ข้อ, เลเวล3: ${multipleLevel3} ข้อ )`;
         document.getElementById("total-essay-all").textContent = `${essayCount} ข้อ (เลเวล1: ${essayLevel1} ข้อ, เลเวล2: ${essayLevel2} ข้อ, เลเวล3: ${essayLevel3} ข้อ )`;
         
@@ -864,6 +874,52 @@ document.getElementById("save-edit-btn").addEventListener("click", async () => {
         console.error("Error updating question:", error);
     }
 });
+
+//ลบหลายคำถาม
+    let selectedQuizIds = [];
+
+    // ฟังก์ชันเลือกคำถาม
+    document.addEventListener("click", (event) => {
+        if (event.target.classList.contains("select-btn")) {
+            const quizId = event.target.closest("tr").dataset.quizId;
+
+            if (selectedQuizIds.includes(quizId)) {
+                selectedQuizIds = selectedQuizIds.filter(id => id !== quizId);
+                event.target.classList.remove("selected");
+            } else {
+                selectedQuizIds.push(quizId);
+                event.target.classList.add("selected");
+            }
+        }
+    });
+
+    // ฟังก์ชันลบคำถามที่เลือก
+    document.getElementById("delete-selected-btn").addEventListener("click", async () => {
+        if (selectedQuizIds.length === 0) {
+            alert("กรุณาเลือกคำถามที่ต้องการลบ");
+            return;
+        }
+
+        if (confirm("คุณแน่ใจหรือไม่ว่าต้องการลบคำถามที่เลือก?")) {
+            try {
+                const response = await fetch("/delete-multiple-quiz", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ quizIds: selectedQuizIds })
+                });
+
+                if (response.ok) {
+                    alert("ลบคำถามที่เลือกสำเร็จ");
+                    selectedQuizIds = [];
+                    fetchQuestions();
+                } else {
+                    alert("เกิดข้อผิดพลาดในการลบคำถาม");
+                }
+            } catch (error) {
+                console.error("Error deleting questions:", error);
+            }
+        }
+    });
 
 // เสียงปุ่ม
     // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์

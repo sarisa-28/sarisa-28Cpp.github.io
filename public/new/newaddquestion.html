@@ -215,6 +215,11 @@ h2 {
         // ฟังก์ชันสำหรับการเพิ่มคำถามแบบปรนัย
         document.getElementById('add-question-form').addEventListener('submit', async function(event) {
             event.preventDefault();
+            const adminUsername = sessionStorage.getItem('username'); // ดึงชื่อผู้ใช้ที่ล็อกอิน
+            if (!adminUsername) {
+                alert("คุณต้องล็อกอินก่อนเพิ่มคำถาม!");
+                return;
+            }
 
             const newQuestion = document.getElementById('new-question').value;
             const option1 = document.getElementById('option1').value;
@@ -231,7 +236,8 @@ h2 {
                 options: [option1, option2, option3, option4],
                 correct: correctAnswer,
                 timer: questionTimer,
-                level: level
+                level: level,
+                adminUsername: adminUsername  // ✅ ส่งข้อมูล Admin ไปกับ API
             };
 
             try {
@@ -257,6 +263,11 @@ h2 {
         // ฟังก์ชันสำหรับการเพิ่มคำถามแบบอัตนัย
         document.getElementById('add-question-form2').addEventListener('submit', async function(event) {
             event.preventDefault();
+            const adminUsername = sessionStorage.getItem('username'); // ดึงชื่อผู้ใช้ที่ล็อกอิน
+            if (!adminUsername) {
+                alert("คุณต้องล็อกอินก่อนเพิ่มคำถาม!");
+                return;
+            }
 
             const newQuestion = document.getElementById('new-question2').value;
             const correctAnswer = document.getElementById('correct-answer2').value;
@@ -268,7 +279,8 @@ h2 {
                 question: newQuestion,
                 correct: correctAnswer,
                 timer: questionTimer,
-                level: level
+                level: level,
+                adminUsername: adminUsername  // ✅ ส่งข้อมูล Admin ไปกับ API
             };
 
             try {
@@ -310,9 +322,12 @@ async function uploadFile() {
         const formData = new FormData();
         formData.append('file', fileInput.files[0]);
 
+        const username = sessionStorage.getItem("username"); // ดึงชื่อ Admi
+
         try {
             const response = await fetch('/upload-questions2', {
                 method: 'POST',
+                headers: { 'Admin-Username': username },
                 body: formData
             });
 

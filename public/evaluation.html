@@ -253,27 +253,20 @@ body {
 window.onload = function() {
     var admintopMenu = document.getElementById("admin-top-menu");
     var playertopMenu = document.getElementById("player-top-menu");
-    var usernameDisplay = document.getElementById("username-display");
 
-    // ลองดึง username จากทั้งสองที่
-    var username = localStorage.getItem("username") || sessionStorage.getItem("username");
-    var loginType = localStorage.getItem("loginType");
+    var username = sessionStorage.getItem("username") || "Guest";
+    var loginType = sessionStorage.getItem("loginType"); // ดึง loginType ที่ถูกต้อง
 
-    console.log("Login type:", loginType);
-    console.log("Username:", username);
+    document.getElementById("username-display").textContent = username;
 
-    // ถ้า username มีค่าจริง ให้แสดง ถ้าไม่มีก็เป็น Guest
-    usernameDisplay.textContent = username ? username : "Guest";
-
-    // แสดงเมนูที่เหมาะสม
-    if (loginType === "admin") {
+    if (loginType === "Admin") {
         admintopMenu.style.display = "block";
         playertopMenu.style.display = "none";
-    } else if (loginType === "player") {
+    } else if (loginType === "Player") {
         admintopMenu.style.display = "none";
         playertopMenu.style.display = "block";
     } else {
-        console.log("No valid login type found");
+        console.error("Invalid loginType:", loginType);
     }
 };
 

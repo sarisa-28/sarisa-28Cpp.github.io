@@ -253,6 +253,7 @@
                 </select>
                 <button onclick="saveSoundSetting()">Save</button>
             </div>
+            
     <h2>Reset Password</h2>
     <form>
         <div class="form-group">
@@ -389,18 +390,21 @@ window.onload = function() {
     var admintopMenu = document.getElementById("admin-top-menu");
     var playertopMenu = document.getElementById("player-top-menu");
 
-    // ตรวจสอบค่า loginType ก่อนแสดงเมนู
-    if (loginType === "admin") {
+    var username = sessionStorage.getItem("username") || "Guest";
+    var loginType = sessionStorage.getItem("loginType"); // ดึง loginType ที่ถูกต้อง
+
+    document.getElementById("username-display").textContent = username;
+
+    if (loginType === "Admin") {
         admintopMenu.style.display = "block";
         playertopMenu.style.display = "none";
-    } else if (loginType === "player") {
+    } else if (loginType === "Player") {
         admintopMenu.style.display = "none";
         playertopMenu.style.display = "block";
     } else {
-        // กรณี loginType ไม่มีค่าหรือไม่ถูกต้อง
-        console.log("No login type found");
+        console.error("Invalid loginType:", loginType);
     }
-}
+};
 
 // เสียงปุ่ม
     // ฟังก์ชันเล่นเสียงแบบไม่มีดีเลย์

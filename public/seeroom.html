@@ -180,7 +180,8 @@
             const roomDetailsContainer = document.getElementById('room-details');
 
             // ดึงข้อมูล RoomCode ทั้งหมด
-            fetch('/api/roomcodes')
+            const adminUsername = sessionStorage.getItem("username"); // ดึง admin ที่ล็อกอินอยู่
+            fetch(`/api/roomcodes?adminUsername=${adminUsername}`)
                 .then(response => response.json())
                 .then(data => {
                     roomCodesContainer.innerHTML = '';

@@ -20,10 +20,12 @@ const server = http.createServer(app);
 const io = socketIo(server);
 
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static('public'));
 
 // เชื่อมต่อ MongoDB
-mongoose.connect('mongodb+srv://sarisat:cpp1234@cluster0.ezcgx.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+mongoose.connect('mongodb+srv://memesarisa:1234@cluster0.pta0w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0', {
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 }).then(() => {
     console.log("Connected to MongoDB successfully");
 }).catch((error) => {
@@ -41,7 +43,8 @@ const quizSchema = new mongoose.Schema({
     options: [String],  // สำหรับคำถามปรนัย
     correct: mongoose.Schema.Types.Mixed,  // ใช้ Mixed เพื่อรองรับทั้งคำตอบแบบตัวเลือกและคำตอบแบบอัตนัย
     timer: Number,
-    level: Number // เพิ่มระดับของคำถาม
+    level: Number, // เพิ่มระดับของคำถาม
+    adminUsername: { type: String, required: true } // ✅ เพิ่มฟิลด์ Admin
 });
 
 const Quiz = mongoose.model('Quiz', quizSchema);
@@ -98,7 +101,8 @@ const roomCodeSchema = new mongoose.Schema({
     totalTime: { type: Number, default:0 },
     totalmultipleChoice: { type: Number, default:0 },
     totalEssay: { type: Number, default:0 },
-    totalQuestions: { type: Number, default:0 }
+    totalQuestions: { type: Number, default:0 },
+    adminUsername: { type: String, required: true } // ✅ เพิ่มฟิลด์ Admin
 });
 
 const RoomCode = mongoose.model('RoomCode', roomCodeSchema);
@@ -140,7 +144,8 @@ const quizSchema2 = new mongoose.Schema({
     options: [String],  // สำหรับคำถามปรนัย
     correct: mongoose.Schema.Types.Mixed,  // ใช้ Mixed เพื่อรองรับทั้งคำตอบแบบตัวเลือกและคำตอบแบบอัตนัย
     timer: Number,
-    level: Number // เพิ่มระดับของคำถาม
+    level: Number, // เพิ่มระดับของคำถาม
+    adminUsername: { type: String, required: true } // ✅ เพิ่มฟิลด์ Admin
 });
 
 const Quiz2 = mongoose.model('Quiz2', quizSchema2);
@@ -177,7 +182,8 @@ const roomCodeSchema2 = new mongoose.Schema({
     totalTime: { type: Number, default:0 },
     totalmultipleChoice: { type: Number, default:0 },
     totalEssay: { type: Number, default:0 },
-    totalQuestions: { type: Number, default:0 }
+    totalQuestions: { type: Number, default:0 },
+    adminUsername: { type: String, required: true } // ✅ เพิ่มฟิลด์ Admin
 });
 
 const RoomCode2 = mongoose.model('RoomCode2', roomCodeSchema2);
@@ -327,7 +333,7 @@ app.post('/login', async (req, res) => {
         }
 
         // ส่งข้อมูลประเภทของผู้ใช้กลับไป (Admin/Player)
-        res.status(200).json({ type: user.type });
+        res.status(200).json({ username: user.username, type: user.type });
 
         // คุณไม่ต้องส่ง <script> ที่เกี่ยวข้องกับ sessionStorage ที่นี่
         // ให้หน้าต่างๆ ใช้การเก็บข้อมูลจาก sessionStorage แทน
@@ -339,7 +345,7 @@ app.post('/login', async (req, res) => {
 
 // เส้นทางสำหรับเพิ่มคำถามใหม่
 app.post('/add-quiz', async (req, res) => {
-    const { type, question, options, correct, timer, level } = req.body;
+    const { type, question, options, correct, timer, level, adminUsername } = req.body;
 
     const newQuiz = new Quiz({
         type,
@@ -347,7 +353,8 @@ app.post('/add-quiz', async (req, res) => {
         options: options || [],  // ถ้าไม่ใช่คำถามปรนัย จะไม่ใช้ options
         correct,
         timer,
-        level
+        level,
+        adminUsername  // ✅ บันทึกว่า Admin คนไหนเพิ่มคำถาม
     });
 
     try {
@@ -362,7 +369,12 @@ app.post('/add-quiz', async (req, res) => {
 // เส้นทางสำหรับดึงคำถามทั้งหมด
 app.get('/quiz', async (req, res) => {
     try {
-        const quizzes = await Quiz.find();
+        const adminUsername = req.query.adminUsername;
+        if (!adminUsername) {
+            return res.status(400).json({ error: "Missing adminUsername" });
+        }
+
+        const quizzes = await Quiz.find({ adminUsername });
         res.json(quizzes);
     } catch (error) {
         console.error('Error fetching quizzes:', error);
@@ -478,7 +490,11 @@ app.post('/register', async (req, res) => {
 
 // API สำหรับบันทึก RoomCode และข้อมูลคำถาม
 app.post('/save-roomcode', async (req, res) => {
-    const { roomCode, selectedQuestions, totalScore, totalTime, totalmultipleChoice, totalEssay, totalQuestions } = req.body;
+    const { roomCode, selectedQuestions, totalScore, totalTime, totalmultipleChoice, totalEssay, totalQuestions, adminUsername } = req.body;
+
+    if (!adminUsername) {
+        return res.status(400).json({ error: "Missing adminUsername" });
+    }
 
     // ตรวจสอบว่า roomCode ซ้ำหรือไม่
     const existingRoom = await RoomCode.findOne({ roomCode });
@@ -502,6 +518,7 @@ app.post('/save-roomcode', async (req, res) => {
         totalmultipleChoice: totalmultipleChoice,
         totalEssay: totalEssay,
         totalQuestions: totalQuestions,
+        adminUsername // ✅ บันทึกว่า Admin คนไหนสร้างห้อง
     });
 
     try {
@@ -604,7 +621,12 @@ app.post('/reset-password2', async (req, res) => {
 // เส้นทางสำหรับดึงข้อมูล RoomCode ทั้งหมด
 app.get('/api/roomcodes', async (req, res) => {
     try {
-        const roomCodes = await RoomCode.find();
+        const adminUsername = req.query.adminUsername;  // ดึง username ของ Admin จาก query
+        if (!adminUsername) {
+            return res.status(400).json({ error: "Missing adminUsername" });
+        }
+
+        const roomCodes = await RoomCode.find({ adminUsername }); // กรองเฉพาะที่ Admin คนนั้นสร้าง
         res.json(roomCodes);
     } catch (error) {
         console.error('Error fetching room codes:', error);
@@ -1022,8 +1044,22 @@ app.get('/get-current-scores/:roomCode', async (req, res) => {
 // API สำหรับดึงประวัติห้องเกมทั้งหมด
 app.get('/api/historyroomcode', async (req, res) => {
     try {
-        const history = await HistoryRoomCode.find().sort({ datePlayed: -1 }); // เรียงจากล่าสุดไปเก่าสุด
-        res.json(history);
+        const history = await HistoryRoomCode.find().sort({ datePlayed: -1 });
+
+        // ดึงข้อมูล adminUsername จาก RoomCode
+        const roomCodes = await RoomCode.find({}, 'roomCode adminUsername');
+        const roomCodeMap = {};
+        roomCodes.forEach(room => {
+            roomCodeMap[room.roomCode] = room.adminUsername;
+        });
+
+        // เพิ่ม adminUsername เข้าไปในข้อมูล History
+        const updatedHistory = history.map(entry => ({
+            ...entry.toObject(),
+            adminUsername: roomCodeMap[entry.roomCode] || "Unknown"
+        }));
+
+        res.json(updatedHistory);
     } catch (error) {
         console.error('Error fetching history:', error);
         res.status(500).send('Error fetching history');
@@ -1140,14 +1176,23 @@ app.post('/random-questions', async (req, res) => {
 //แอดไฟล์คำถาม
 app.post('/upload-questions', upload.single('file'), async (req, res) => {
     try {
+        console.log("Uploaded file:", req.file);
+        console.log("Admin username:", req.headers['admin-username']);
         const filePath = req.file.path;
         const fileContent = fs.readFileSync(filePath, 'utf-8');
-        const questions = JSON.parse(fileContent); // อ่าน JSON ไฟล์
+        let questions = JSON.parse(fileContent); // เปลี่ยนจาก const เป็น let
 
         if (!Array.isArray(questions)) {
             return res.status(400).json({ error: 'Invalid file format' });
         }
 
+        const adminUsername = req.headers['admin-username']; // รับค่า addedBy จาก header
+        if (!adminUsername) {
+            return res.status(400).json({ error: 'Admin username (addedBy) is required' });
+        }
+        
+        questions = questions.map(q => ({ ...q, adminUsername })); // ✅ ใช้ let แล้วสามารถอัปเดตค่าได้
+        
         await Quiz.insertMany(questions); // เพิ่มคำถามลง MongoDB ทีเดียว
 
         fs.unlinkSync(filePath); // ลบไฟล์หลังจากใช้งานเสร็จ
@@ -1157,6 +1202,7 @@ app.post('/upload-questions', upload.single('file'), async (req, res) => {
         res.status(500).json({ error: 'Error uploading questions' });
     }
 });
+
 app.get('/quiz/:id', async (req, res) => {
     try {
         const quiz = await Quiz.findById(req.params.id);
@@ -1201,10 +1247,27 @@ app.get('/api/players', async (req, res) => {
     }
 });
 
+//ลบหลายคำถาม
+app.post("/delete-multiple-quiz", async (req, res) => {
+    const { quizIds } = req.body;
+
+    if (!quizIds || quizIds.length === 0) {
+        return res.status(400).json({ error: "ไม่มีคำถามที่ถูกเลือก" });
+    }
+
+    try {
+        await Quiz.deleteMany({ _id: { $in: quizIds } });
+        res.status(200).json({ message: "ลบคำถามที่เลือกสำเร็จ" });
+    } catch (error) {
+        console.error("Error deleting multiple questions:", error);
+        res.status(500).json({ error: "เกิดข้อผิดพลาดในการลบคำถาม" });
+    }
+});
+
 //เว็บแบบที่2 
 // เส้นทางสำหรับเพิ่มคำถามใหม่
 app.post('/add-quiz2', async (req, res) => {
-    const { type, question, options, correct, timer, level } = req.body;
+    const { type, question, options, correct, timer, level, adminUsername } = req.body;
 
     const newQuiz2 = new Quiz2({
         type,
@@ -1212,7 +1275,8 @@ app.post('/add-quiz2', async (req, res) => {
         options: options || [],  // ถ้าไม่ใช่คำถามปรนัย จะไม่ใช้ options
         correct,
         timer,
-        level
+        level,
+        adminUsername 
     });
 
     try {
@@ -1227,7 +1291,12 @@ app.post('/add-quiz2', async (req, res) => {
 // เส้นทางสำหรับดึงคำถามทั้งหมด
 app.get('/quiz2', async (req, res) => {
     try {
-        const quizzes = await Quiz2.find();
+        const adminUsername = req.query.adminUsername;
+        if (!adminUsername) {
+            return res.status(400).json({ error: "Missing adminUsername" });
+        }
+
+        const quizzes = await Quiz2.find({ adminUsername });
         res.json(quizzes);
     } catch (error) {
         console.error('Error fetching quizzes:', error);
@@ -1342,7 +1411,11 @@ app.post('/save-score2', async (req, res) => {
 
 // API สำหรับบันทึก RoomCode และข้อมูลคำถาม
 app.post('/save-roomcode2', async (req, res) => {
-    const { roomCode, selectedQuestions, totalScore, totalTime, totalmultipleChoice, totalEssay, totalQuestions } = req.body;
+    const { roomCode, selectedQuestions, totalScore, totalTime, totalmultipleChoice, totalEssay, totalQuestions, adminUsername  } = req.body;
+
+    if (!adminUsername) {
+        return res.status(400).json({ error: "Missing adminUsername" });
+    }
 
     // ตรวจสอบว่า roomCode ซ้ำหรือไม่
     const existingRoom = await RoomCode2.findOne({ roomCode });
@@ -1366,6 +1439,7 @@ app.post('/save-roomcode2', async (req, res) => {
         totalmultipleChoice: totalmultipleChoice,
         totalEssay: totalEssay,
         totalQuestions: totalQuestions,
+        adminUsername // ✅ บันทึกว่า Admin คนไหนสร้างห้อง
     });
 
     try {
@@ -1379,7 +1453,12 @@ app.post('/save-roomcode2', async (req, res) => {
 // เส้นทางสำหรับดึงข้อมูล RoomCode ทั้งหมด
 app.get('/api/roomcodes2', async (req, res) => {
     try {
-        const roomCodes = await RoomCode2.find();
+        const adminUsername = req.query.adminUsername;  // ดึง username ของ Admin จาก query
+        if (!adminUsername) {
+            return res.status(400).json({ error: "Missing adminUsername" });
+        }
+
+        const roomCodes = await RoomCode2.find({ adminUsername }); // กรองเฉพาะที่ Admin คนนั้นสร้าง
         res.json(roomCodes);
     } catch (error) {
         console.error('Error fetching room codes:', error);
@@ -1807,14 +1886,23 @@ app.post('/random-questions2', async (req, res) => {
 //แอดไฟล์คำถาม
 app.post('/upload-questions2', upload.single('file'), async (req, res) => {
     try {
+        console.log("Uploaded file:", req.file);
+        console.log("Admin username:", req.headers['admin-username']);
         const filePath = req.file.path;
         const fileContent = fs.readFileSync(filePath, 'utf-8');
-        const questions = JSON.parse(fileContent); // อ่าน JSON ไฟล์
+        let questions = JSON.parse(fileContent); // เปลี่ยนจาก const เป็น let
 
         if (!Array.isArray(questions)) {
             return res.status(400).json({ error: 'Invalid file format' });
         }
 
+        const adminUsername = req.headers['admin-username']; // รับค่า addedBy จาก header
+        if (!adminUsername) {
+            return res.status(400).json({ error: 'Admin username (addedBy) is required' });
+        }
+        
+        questions = questions.map(q => ({ ...q, adminUsername })); // ✅ ใช้ let แล้วสามารถอัปเดตค่าได้
+        
         await Quiz2.insertMany(questions); // เพิ่มคำถามลง MongoDB ทีเดียว
 
         fs.unlinkSync(filePath); // ลบไฟล์หลังจากใช้งานเสร็จ
@@ -1824,6 +1912,7 @@ app.post('/upload-questions2', upload.single('file'), async (req, res) => {
         res.status(500).json({ error: 'Error uploading questions' });
     }
 });
+
 app.get('/quiz2/:id', async (req, res) => {
     try {
         const quiz2 = await Quiz2.findById(req.params.id);
@@ -1857,8 +1946,26 @@ app.put('/update-quiz2/:id', async (req, res) => {
     }
 });
 
+//ลบหลายคำถาม
+app.post("/delete-multiple-quiz2", async (req, res) => {
+    const { quizIds } = req.body;
+
+    if (!quizIds || quizIds.length === 0) {
+        return res.status(400).json({ error: "ไม่มีคำถามที่ถูกเลือก" });
+    }
+
+    try {
+        await Quiz2.deleteMany({ _id: { $in: quizIds } });
+        res.status(200).json({ message: "ลบคำถามที่เลือกสำเร็จ" });
+    } catch (error) {
+        console.error("Error deleting multiple questions:", error);
+        res.status(500).json({ error: "เกิดข้อผิดพลาดในการลบคำถาม" });
+    }
+});
+
 // เริ่มเซิร์ฟเวอร์
 const PORT = process.env.PORT || 10000;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
+  

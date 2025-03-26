@@ -263,9 +263,9 @@
             alert(`${data.type} login successful!`);
             
             // ตรวจสอบ loginType และไปยังหน้าที่เหมาะสม
-            if (loginType === 'Admin') {
+            if (loginType === "admin" || loginType === "Admin") {
                 window.location.href = "start.html";  // ถ้า login เป็น Admin ไปยัง start.html
-            } else if (loginType === 'Player') {
+            } else if (loginType === "player" || loginType === "Player") {
                 window.location.href = "play.html";  // ถ้า login เป็น Player ไปยัง play.html
             }
         } else {
@@ -434,7 +434,8 @@ async function handleLogin() {
 
         if (response.ok) {
             const data = await response.json();
-            sessionStorage.setItem('username', username);
+            sessionStorage.setItem("username", data.username);
+            sessionStorage.setItem("loginType", data.type);
             socket.emit('player-online', username);  // 📌 แจ้งเซิร์ฟเวอร์ว่าผู้เล่น Online
             alert(`${data.type} login successful!`);
             
