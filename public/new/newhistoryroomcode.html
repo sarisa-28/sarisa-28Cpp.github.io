@@ -348,6 +348,7 @@ h1 {
     
                 const playersList = document.getElementById('modal-players');
                 playersList.innerHTML = '';
+                playersList.appendChild(adminInfo); // เพิ่ม adminUsername
                 history.players.forEach(player => {
                     const li = document.createElement('li');
                     li.innerText = `Rank ${player.rank}: ${player.name} - ${player.score} points`;
