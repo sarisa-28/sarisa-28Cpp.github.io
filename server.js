@@ -215,7 +215,7 @@ const HistoryRoomCode2 = mongoose.model('HistoryRoomCode2', historySchema2);
 
 
 const corsOptions = {
-    origin: 'https://scs3067.cpkkuhost.com', // หรือ URL ที่คุณใช้
+    origin: 'https://sarisa-28cppgithubio-production.up.railway.app', // หรือ URL ที่คุณใช้
     methods: ['GET', 'POST'],
     allowedHeaders: ['Content-Type'],
 };
